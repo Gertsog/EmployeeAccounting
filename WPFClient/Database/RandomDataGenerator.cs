@@ -6,23 +6,26 @@ using System.IO;
 using System.Linq;
 using System.Net;
 
-
 namespace WPFClient.Database
 {
+    // Класс для генерации случайных сотрудников с помощью API
     public class RandomDataGenerator
     {
-        EmployeeAccountingDbContext db;
+        readonly EmployeeAccountingDbContext db;
+
+        string[] positions = { "Разработчик", "Девопс", "Бухгалтер" };
+        string[] departmentNames = { "Разработка", "Сопровождение", "Бухгалтерия" };
+
         string url = "https://api.randomdatatools.ru/";
         string requestParams = "?count=50&gender=unset&typeName=all&unescaped=false";
         string dataParams = "&params=LastName,FirstName,FatherName";
-        string[] positions = { "Разработчик", "Девопс", "Бухгалтер" };
-        string[] departmentNames = { "Разработка", "Сопровождение", "Бухгалтерия" };
 
         public RandomDataGenerator(EmployeeAccountingDbContext context) 
         {
             db = context;
         }
 
+        //Создание заготовленных заранее отделов
         public void GenerateDepartments()
         {
             db.Departments.Load();
@@ -41,6 +44,7 @@ namespace WPFClient.Database
             }
         }
 
+        //Получение сотрудников с помощью API и дозаполнение отдела, должности, оклада
         public void GenerateRandomEmployees()
         {
             GenerateDepartments();
@@ -58,7 +62,7 @@ namespace WPFClient.Database
             }
             response.Close();
 
-            for (int i = 0; i < employees.Count(); i++)
+            for (int i = 0; i < employees.Count; i++)
             {
                 var random = new Random();
                 int randomInt = random.Next(0, 15);

@@ -11,15 +11,15 @@
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding WindowLoaded}" />
+            <i:InvokeCommandAction Command="{Binding WindowLoadedCommand}" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Closing">
-            <i:InvokeCommandAction Command="{Binding WindowClosed}"/>
+            <i:InvokeCommandAction Command="{Binding WindowClosedCommand}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
     <Grid Margin="0,0,0,0">
-        <Button Content="Новый сотрудник" Command="{Binding AddEmployee}" HorizontalAlignment="Left" Margin="33,26,0,0" VerticalAlignment="Top" Width="187"/>
+        <Button Content="Новый сотрудник" Command="{Binding AddEmployeeCommand}" HorizontalAlignment="Left" Margin="33,26,0,0" VerticalAlignment="Top" Width="187"/>
         <Grid DataContext="{Binding SelectedEmployee}"  Margin="0,60,540,183">
             <TextBlock HorizontalAlignment="Left" Margin="30,0,0,0" TextWrapping="Wrap" Text="Фамилия" VerticalAlignment="Top"/>
             <TextBox Text="{Binding Path=LastName }" HorizontalAlignment="Left" Margin="100,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
@@ -45,20 +45,20 @@
                   SelectedValuePath="Name"
                   DisplayMemberPath="Name"
                   HorizontalAlignment="Left" Margin="100,150,0,0" VerticalAlignment="Top" Width="120" />
-        <Button Content="+" Command="{Binding OpenDepartmentView}" HorizontalAlignment="Left" Margin="225,150,0,0" VerticalAlignment="Top" Width="23" Height="22"/>
+        <Button Content="+" Command="{Binding OpenDepartmentViewCommand}" HorizontalAlignment="Left" Margin="225,150,0,0" VerticalAlignment="Top" Width="23" Height="22"/>
 
         <TextBlock Text="{Binding DialogText}"
                    Foreground="{Binding DialogTextColor}" TextAlignment="Center" 
                    HorizontalAlignment="Left" Margin="33,256,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="187"/>
-        <Button Content="Сохранить" Command="{Binding SaveEmployee}" HorizontalAlignment="Left" Margin="85,293,0,0" VerticalAlignment="Top" Width="90"/>
+        <Button Content="Сохранить" Command="{Binding SaveEmployeeCommand}" HorizontalAlignment="Left" Margin="85,293,0,0" VerticalAlignment="Top" Width="90"/>
         <Button Content="Удалить" Command="{Binding RemoveEmployeeCommand}" HorizontalAlignment="Left" Margin="85,318,0,0" VerticalAlignment="Top" Width="90"/>
-        <Button Content="Заполнить БД" Command="{Binding FillDb}" HorizontalAlignment="Left" Margin="85,373,0,0" VerticalAlignment="Top" Width="90"/>
+        <Button Content="Заполнить БД" Command="{Binding FillDbCommand}" HorizontalAlignment="Left" Margin="85,373,0,0" VerticalAlignment="Top" Width="90"/>
         <TextBox Name="SearchTextBox" Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="269,31,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="299" Height="20">
             <TextBox.InputBindings>
-                <KeyBinding Command="{Binding SearchButtonClick}" Key="Return" />
+                <KeyBinding Command="{Binding SearchCommand}" Key="Return" />
             </TextBox.InputBindings>
         </TextBox>
-        <Button Content="Поиск" Command="{Binding SearchButtonClick}" HorizontalAlignment="Left" Margin="573,31,0,0" VerticalAlignment="Top" Width="90"/>
+        <Button Content="Поиск" Command="{Binding SearchCommand}" HorizontalAlignment="Left" Margin="573,31,0,0" VerticalAlignment="Top" Width="90"/>
 
         <DataGrid Name="EmployeeGrid" 
                   ItemsSource="{Binding Employees, UpdateSourceTrigger=PropertyChanged}"

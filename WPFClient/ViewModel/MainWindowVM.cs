@@ -1,17 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Controls;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using WPFClient.Database;
 
+//Client - потому что изначально планировалось клиент-серверное приложение, но что-то пошло не так
 namespace WPFClient
 {
     public class MainWindowVM : NotifyPropertyChanged
     {
         #region properties
 
-        private EmployeeAccountingDbContext db;
+        private readonly EmployeeAccountingDbContext db;
 
         private ObservableCollection<Employee> employees;
         public ObservableCollection<Employee> Employees
@@ -90,36 +91,36 @@ namespace WPFClient
             db = new EmployeeAccountingDbContext();
             Employees = new ObservableCollection<Employee>();
             Departments = new ObservableCollection<Department>();
+            SelectedEmployee = new Employee();
+            SearchText = "";
             DialogText = "";
             DialogTextColor = Color.Black;
-            SearchText = "";
-            SelectedEmployee = new Employee();
         }
 
         #endregion
 
         #region commands
 
-        private ICommand windowLoaded;
-        public ICommand WindowLoaded => windowLoaded ??= new Command(() => LoadInitialData());
+        private ICommand windowLoadedCommand;
+        public ICommand WindowLoadedCommand => windowLoadedCommand ??= new Command(() => LoadInitialData());
 
-        private ICommand windowClosed;
-        public ICommand WindowClosed => windowClosed ??= new Command(() => DisposeDB());
+        private ICommand windowClosedCommand;
+        public ICommand WindowClosedCommand => windowClosedCommand ??= new Command(() => DisposeDb());
 
-        private ICommand fillDb;
-        public ICommand FillDb => fillDb ??= new Command(() => FillDBWithRandomEmployees());
+        private ICommand fillDbCommand;
+        public ICommand FillDbCommand => fillDbCommand ??= new Command(() => FillDbWithRandomEmployees());
 
-        private ICommand searchButtonClick;
-        public ICommand SearchButtonClick => searchButtonClick ??= new Command(() => Search());
+        private ICommand searchCommand;
+        public ICommand SearchCommand => searchCommand ??= new Command(() => Search());
 
-        private ICommand saveEmployee;
-        public ICommand SaveEmployee => saveEmployee ??= new Command(() => SaveSelectedEmployee());
+        private ICommand saveEmployeeCommand;
+        public ICommand SaveEmployeeCommand => saveEmployeeCommand ??= new Command(() => SaveSelectedEmployee());
 
-        private ICommand openDepartmentView;
-        public ICommand OpenDepartmentView => openDepartmentView ??= new Command(() => CallDepartmentView());
+        private ICommand openDepartmentViewCommand;
+        public ICommand OpenDepartmentViewCommand => openDepartmentViewCommand ??= new Command(() => OpenDepartmentView());
 
-        private ICommand addEmployee;
-        public ICommand AddEmployee => addEmployee ??= new Command(() => AddNewEmployee());
+        private ICommand addEmployeeCommand;
+        public ICommand AddEmployeeCommand => addEmployeeCommand ??= new Command(() => AddEmployee());
 
         private ICommand removeEmployeeCommand;
         public ICommand RemoveEmployeeCommand => removeEmployeeCommand ??= new Command(() => RemoveEmployee());
@@ -127,18 +128,8 @@ namespace WPFClient
         #endregion
 
         #region methods
-        public void IsAllowedInput(object sender, TextCompositionEventArgs e)
-        {
-            var textBox = (TextBox)sender;
-            if (!(char.IsDigit(e.Text, 0)
-                || ((e.Text == ".")
-                && !textBox.Text.Contains(".")
-                && textBox.Text.Length != 0)))
-            {
-                e.Handled = true;
-            }
-        }
 
+        //Перезаполнение коллекций для обновления данных на вью
         private void RefillCollections()
         {
             LoadDeaprtments();
@@ -159,7 +150,8 @@ namespace WPFClient
             Employees = new ObservableCollection<Employee>(employeesList);
         }
 
-        private void AddNewEmployee()
+        //Подсказка "как добавить сотрудника"
+        private void AddEmployee()
         {
             DialogTextColor = Color.Black;
             DialogText = DialogPhrase.FillAndSave;
@@ -169,6 +161,7 @@ namespace WPFClient
             }
         }
 
+        //Маппинг класса в сущность EF
         private void MapEmployee(Employee employee, Database.Employee dbEmployee)
         {
             dbEmployee.LastName = employee.LastName;
@@ -179,6 +172,7 @@ namespace WPFClient
             dbEmployee.DepartmentId = Departments.First(d => d.Name == SelectedEmployee.DepartmentName).Id;
         }
 
+        //Проверка на наличие незаполненных строковых свойств
         private bool HasEmployeeEmptyProperties(Employee employee)
         {
             return employee.GetType().GetProperties()
@@ -186,7 +180,8 @@ namespace WPFClient
                 .Select(pi => pi.GetValue(SelectedEmployee) as string)
                 .Any(value => string.IsNullOrEmpty(value));
         }
-                
+        
+        //Сохранение текущего сотрудника в базу
         private void SaveSelectedEmployee()
         {
             Database.Employee currentEmployee;
@@ -198,37 +193,50 @@ namespace WPFClient
                 return;
             }
 
-            if (SelectedEmployee.Id != default)
+            try
             {
-                currentEmployee = db.Employees.First(e => e.Id == SelectedEmployee.Id);
-                currentEmployee.Id = SelectedEmployee.Id;
-                MapEmployee(SelectedEmployee, currentEmployee);
-                db.Update(currentEmployee);
-            }
-            else
-            {
-                currentEmployee = new Database.Employee();
+                if (SelectedEmployee.Id != default)
                 {
+                    currentEmployee = db.Employees.First(e => e.Id == SelectedEmployee.Id);
+                    currentEmployee.Id = SelectedEmployee.Id;
                     MapEmployee(SelectedEmployee, currentEmployee);
-                    db.Add(currentEmployee);
-                    DialogTextColor = Color.Black;
-                    DialogText = DialogPhrase.Saved;
+                    db.Update(currentEmployee);
                 }
+                else
+                {
+                    currentEmployee = new Database.Employee();
+                    {
+                        MapEmployee(SelectedEmployee, currentEmployee);
+                        db.Add(currentEmployee);
+                        DialogTextColor = Color.Black;
+                        DialogText = DialogPhrase.Saved;
+                    }
+                }
+                db.SaveChanges();
+                RefillCollections();
+                SelectedEmployee = Employees.First(e => e.Id == currentEmployee.Id);
             }
-            db.SaveChanges();
-            RefillCollections();
-            SelectedEmployee = Employees.First(e => e.Id == currentEmployee.Id);
+            catch
+            {
+                DialogTextColor = Color.Red;
+                DialogText = DialogPhrase.SaveToDbError;
+            }
         }
 
-        private void FillDBWithRandomEmployees() 
+        //Заполнение базы сгенерированными сотрудниками
+        private async Task FillDbWithRandomEmployees() 
         {
-            var rdg = new RandomDataGenerator(db);
-            rdg.GenerateRandomEmployees();
-            RefillCollections();
-            DialogTextColor = Color.Black;
-            DialogText = DialogPhrase.RandomEmployeesGenerated;
+            await new Task(() =>
+            {
+                var rdg = new RandomDataGenerator(db);
+                rdg.GenerateRandomEmployees();
+                RefillCollections();
+                DialogTextColor = Color.Black;
+                DialogText = DialogPhrase.RandomEmployeesGenerated;
+            });            
         }
 
+        //Загрузка данных при запуске приложения
         private void LoadInitialData()
         { 
             if (!db.Database.CanConnect())
@@ -238,30 +246,42 @@ namespace WPFClient
             RefillCollections();
         }
 
+        //Удаление сотрудника из базы
         private void RemoveEmployee()
         {
             if (SelectedEmployee.Id != default)
             {
-                var currentEmployee = db.Employees.First(e => e.Id == SelectedEmployee.Id);
-                if (currentEmployee != null)
+                try
                 {
-                    db.Remove(currentEmployee);
-                    db.SaveChanges();
-                    RefillCollections();
-                    DialogTextColor = Color.Black;
-                    DialogText = DialogPhrase.EmployeeDeleted;
+                    var currentEmployee = db.Employees.First(e => e.Id == SelectedEmployee.Id);
+                    if (currentEmployee != null)
+                    {
+                        db.Remove(currentEmployee);
+                        db.SaveChanges();
+                        RefillCollections();
+                        DialogTextColor = Color.Black;
+                        DialogText = DialogPhrase.EmployeeDeleted;
+                        return;
+                    }
+                }
+                catch 
+                {
+                    DialogTextColor = Color.Red;
+                    DialogText = DialogPhrase.DeleteFromDbError;
                     return;
                 }
+
             }
             DialogTextColor = Color.Red;
             DialogText = DialogPhrase.EmployeeDoesntExist;
         }
 
-        private void DisposeDB()
+        private void DisposeDb()
         {
             db.Dispose();
         }
 
+        //Поиск среди сотрудников по ФИО
         private void Search()
         {
             LoadEmployees();
@@ -276,7 +296,8 @@ namespace WPFClient
             Employees = new ObservableCollection<Employee>(filteredEmployees);
         }
 
-        private void CallDepartmentView()
+        //Открытие окна добавления отделов
+        private void OpenDepartmentView()
         {
             var departmentVM = new DepartmentVM(Departments);
             var departmentView = new DepartmentView(departmentVM);

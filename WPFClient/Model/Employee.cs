@@ -5,6 +5,7 @@ namespace WPFClient
 {
     public class Employee : NotifyPropertyChanged
     {
+        //Id сотрудника
         private int id;
         public int Id
         {
@@ -16,6 +17,7 @@ namespace WPFClient
             }
         }
 
+        //Фамилия
         private string lastName;
         public string LastName
         {
@@ -27,6 +29,7 @@ namespace WPFClient
             }
         }
 
+        //Имя
         private string firstName;
         public string FirstName
         {
@@ -38,6 +41,7 @@ namespace WPFClient
             }
         }
 
+        //Отчество
         private string fatherName;
         public string FatherName
         {
@@ -49,6 +53,7 @@ namespace WPFClient
             }
         }
 
+        //Должность
         private string position;
         public string Position
         {
@@ -60,13 +65,14 @@ namespace WPFClient
             }
         }
 
+        //Оклад
         private double salary;
         public double Salary
         {
             get => salary;
             set
             {
-                if (value < 0) //TODO: вызвать ошибку?
+                if (value < 0)
                     salary = 0;
                 else
                     salary = value;
@@ -74,6 +80,7 @@ namespace WPFClient
             }
         }
 
+        //Id отдела
         private int departmentId;
         public int DepartmentId
         {
@@ -85,6 +92,7 @@ namespace WPFClient
             }
         }
 
+        //Название отдела
         private string departmentName;
         public string DepartmentName
         {
@@ -101,7 +109,8 @@ namespace WPFClient
 
         }
 
-        public Employee(Database.Employee employee)
+        //TODO: сделать класс с маппингом?
+        public Employee(Database.Employee employee) 
         {
             Id = employee.Id;
             FirstName = employee.FirstName;
@@ -113,6 +122,8 @@ namespace WPFClient
             DepartmentName = employee.Department.Name;
         }
 
+        // Маска для ввода числа в поле с окладом
+        // Хотел оставить в VM, но не смог задать нужный контекст
         public void IsAllowedInput(object sender, TextCompositionEventArgs e)
         {
             var textBox = (TextBox)sender;

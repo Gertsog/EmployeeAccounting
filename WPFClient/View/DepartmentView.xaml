@@ -12,6 +12,6 @@
         <TextBlock Text="Введите название отдела:" HorizontalAlignment="Center" Margin="0,60,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190"/>
         <TextBox Text="{Binding DepartmentName}" HorizontalAlignment="Center" Margin="0,80,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="190" MaxWidth="190" Height="20" MaxHeight="20"/>
         <TextBlock Text="{Binding DialogText}" Foreground="{Binding DialogTextColor}" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" Width="190" Margin="0,110,0,0"/>
-        <Button Content="Сохранить" Command="{Binding SaveDepartment}" HorizontalAlignment="Center" Margin="0,150,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.495,0.637" Width="66"/>
+        <Button Content="Сохранить" Command="{Binding SaveDepartmentCommand}" HorizontalAlignment="Center" Margin="0,150,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.495,0.637" Width="66"/>
     </Grid>
 </Window>

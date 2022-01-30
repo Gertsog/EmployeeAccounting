@@ -2,22 +2,10 @@
 {
     public class Department : NotifyPropertyChanged
     {
+        //Id отдела
         private int id;
-        private string name;
-
-        public Department(string name)
+        public int Id
         {
-            Name = name;
-        }
-
-        public Department(int id, string name)
-        {
-            Id = id;
-            Name = name;
-        }
-
-        public int Id 
-        { 
             get => id;
             set
             {
@@ -25,6 +13,9 @@
                 OnPropertyChanged(nameof(Id));
             }
         }
+
+        //Название отдела
+        private string name;
         public string Name
         {
             get => name;
@@ -34,5 +25,16 @@
                 OnPropertyChanged(nameof(Name));
             }
         }
+
+        public Department(string name)
+        {
+            Name = name;
+        }
+
+        public Department(int id, string name) : this(name)
+        {
+            Id = id;
+        }
+
     }
 }

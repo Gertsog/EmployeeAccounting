@@ -10,7 +10,7 @@ namespace WPFClient
     {
         #region properties
 
-        private EmployeeAccountingDbContext db;
+        private readonly EmployeeAccountingDbContext db;
 
         private ObservableCollection<Department> departments;
         public ObservableCollection<Department> Departments
@@ -79,16 +79,27 @@ namespace WPFClient
 
         #region commands
 
-        private ICommand saveDepartment;
-        public ICommand SaveDepartment => saveDepartment ??= new Command(() => TryAddDepartmentToDB());
+        private ICommand saveDepartmentCommand;
+        public ICommand SaveDepartmentCommand => saveDepartmentCommand ??= new Command(() => TryAddDepartmentToDb());
 
         #endregion
 
         #region methods
 
-        private void TryAddDepartmentToDB()
+        //Добавление нового отдела в базу
+        private void TryAddDepartmentToDb()
         {
-            db.Departments.Load();
+            try
+            {
+                db.Departments.Load();
+            }
+            catch
+            {
+                DialogTextColor = Color.Red;
+                DialogText = DialogPhrase.LoadFromDbError;
+                return;
+            }
+
             if (db.Departments.Any(d => d.Name == DepartmentName))
             {
                 DialogTextColor = Color.Red;
@@ -96,13 +107,21 @@ namespace WPFClient
             }
             else
             {
-                var department = new Database.Department() { Name = DepartmentName };
-                db.Departments.Add(department);
-                db.SaveChanges();
-                department = db.Departments.First(d => d.Name == DepartmentName);
-                Departments.Add(new Department(department.Id, department.Name));
-                DialogTextColor = Color.Black;
-                DialogText = DialogPhrase.Saved;
+                try 
+                {
+                    var department = new Database.Department() { Name = DepartmentName };
+                    db.Departments.Add(department);
+                    db.SaveChanges();
+                    department = db.Departments.First(d => d.Name == DepartmentName);
+                    Departments.Add(new Department(department.Id, department.Name));
+                    DialogTextColor = Color.Black;
+                    DialogText = DialogPhrase.Saved;
+                }
+                catch
+                {
+                    DialogTextColor = Color.Red;
+                    DialogText = DialogPhrase.SaveToDbError;
+                }
             }
         }
 
