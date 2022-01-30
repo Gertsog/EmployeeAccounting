@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using WPFClient.Database;
@@ -71,7 +70,7 @@ namespace WPFClient
             }
         }
 
-        private string searchText = "";
+        private string searchText;
         public string SearchText
         {
             get => searchText;
@@ -92,7 +91,7 @@ namespace WPFClient
             Employees = new ObservableCollection<Employee>();
             Departments = new ObservableCollection<Department>();
             DialogText = "";
-            DialogTextColor = "Black";
+            DialogTextColor = Color.Black;
             SearchText = "";
             SelectedEmployee = new Employee();
         }
@@ -128,7 +127,6 @@ namespace WPFClient
         #endregion
 
         #region methods
-
         public void IsAllowedInput(object sender, TextCompositionEventArgs e)
         {
             var textBox = (TextBox)sender;
@@ -163,8 +161,8 @@ namespace WPFClient
 
         private void AddNewEmployee()
         {
-            DialogTextColor = "Black";
-            DialogText = "Заполните данные и нажмите \"Сохранить\"";
+            DialogTextColor = Color.Black;
+            DialogText = DialogPhrase.FillAndSave;
             if (!HasEmployeeEmptyProperties(SelectedEmployee))
             {
                 SelectedEmployee = new Employee();
@@ -195,8 +193,8 @@ namespace WPFClient
 
             if (HasEmployeeEmptyProperties(SelectedEmployee))
             {
-                DialogTextColor = "Red";
-                DialogText = "Заполните все поля";
+                DialogTextColor = Color.Red;
+                DialogText = DialogPhrase.FillTheFields;
                 return;
             }
 
@@ -213,8 +211,8 @@ namespace WPFClient
                 {
                     MapEmployee(SelectedEmployee, currentEmployee);
                     db.Add(currentEmployee);
-                    DialogTextColor = "Black";
-                    DialogText = "Сохранено!";
+                    DialogTextColor = Color.Black;
+                    DialogText = DialogPhrase.Saved;
                 }
             }
             db.SaveChanges();
@@ -224,12 +222,11 @@ namespace WPFClient
 
         private void FillDBWithRandomEmployees() 
         {
-            var rdg = new RandomDataGenerator();
-            var randomEmployees = rdg.GenerateRandomEmployees();
-            rdg.FillDbWithEmployees(db, randomEmployees);
+            var rdg = new RandomDataGenerator(db);
+            rdg.GenerateRandomEmployees();
             RefillCollections();
-            DialogTextColor = "Black";
-            DialogText = "Сгенерированы случайные сотрудники";
+            DialogTextColor = Color.Black;
+            DialogText = DialogPhrase.RandomEmployeesGenerated;
         }
 
         private void LoadInitialData()
@@ -251,13 +248,13 @@ namespace WPFClient
                     db.Remove(currentEmployee);
                     db.SaveChanges();
                     RefillCollections();
-                    DialogTextColor = "Black";
-                    DialogText = "Сотрудник удален";
+                    DialogTextColor = Color.Black;
+                    DialogText = DialogPhrase.EmployeeDeleted;
                     return;
                 }
             }
-            DialogTextColor = "Red";
-            DialogText = "Сотрудник отсутствует в базе";
+            DialogTextColor = Color.Red;
+            DialogText = DialogPhrase.EmployeeDoesntExist;
         }
 
         private void DisposeDB()

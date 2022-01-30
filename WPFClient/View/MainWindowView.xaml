@@ -19,7 +19,7 @@
     </i:Interaction.Triggers>
 
     <Grid Margin="0,0,0,0">
-        <Button Content="Добавить" Command="{Binding AddEmployee}" HorizontalAlignment="Left" Margin="82,26,0,0" VerticalAlignment="Top" Width="90"/>
+        <Button Content="Новый сотрудник" Command="{Binding AddEmployee}" HorizontalAlignment="Left" Margin="33,26,0,0" VerticalAlignment="Top" Width="187"/>
         <Grid DataContext="{Binding SelectedEmployee}"  Margin="0,60,540,183">
             <TextBlock HorizontalAlignment="Left" Margin="30,0,0,0" TextWrapping="Wrap" Text="Фамилия" VerticalAlignment="Top"/>
             <TextBox Text="{Binding Path=LastName }" HorizontalAlignment="Left" Margin="100,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
@@ -53,7 +53,11 @@
         <Button Content="Сохранить" Command="{Binding SaveEmployee}" HorizontalAlignment="Left" Margin="85,293,0,0" VerticalAlignment="Top" Width="90"/>
         <Button Content="Удалить" Command="{Binding RemoveEmployeeCommand}" HorizontalAlignment="Left" Margin="85,318,0,0" VerticalAlignment="Top" Width="90"/>
         <Button Content="Заполнить БД" Command="{Binding FillDb}" HorizontalAlignment="Left" Margin="85,373,0,0" VerticalAlignment="Top" Width="90"/>
-        <TextBox Name="SearchTextBox" Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="269,31,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="299" Height="20"/>
+        <TextBox Name="SearchTextBox" Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="269,31,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="299" Height="20">
+            <TextBox.InputBindings>
+                <KeyBinding Command="{Binding SearchButtonClick}" Key="Return" />
+            </TextBox.InputBindings>
+        </TextBox>
         <Button Content="Поиск" Command="{Binding SearchButtonClick}" HorizontalAlignment="Left" Margin="573,31,0,0" VerticalAlignment="Top" Width="90"/>
 
         <DataGrid Name="EmployeeGrid" 

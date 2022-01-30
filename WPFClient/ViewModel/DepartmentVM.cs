@@ -67,7 +67,7 @@ namespace WPFClient
         {
             db = new EmployeeAccountingDbContext();
             DialogText = "";
-            DialogTextColor = "Black";
+            DialogTextColor = Color.Black;
         }
 
         public DepartmentVM(ObservableCollection<Department> departments) : this()
@@ -91,8 +91,8 @@ namespace WPFClient
             db.Departments.Load();
             if (db.Departments.Any(d => d.Name == DepartmentName))
             {
-                DialogTextColor = "Red";
-                DialogText = "Такой отдел уже существует";
+                DialogTextColor = Color.Red;
+                DialogText = DialogPhrase.DepartmentAlreadyExists;
             }
             else
             {
@@ -101,8 +101,8 @@ namespace WPFClient
                 db.SaveChanges();
                 department = db.Departments.First(d => d.Name == DepartmentName);
                 Departments.Add(new Department(department.Id, department.Name));
-                DialogTextColor = "Black";
-                DialogText = "Сохранено!";
+                DialogTextColor = Color.Black;
+                DialogText = DialogPhrase.Saved;
             }
         }
 
