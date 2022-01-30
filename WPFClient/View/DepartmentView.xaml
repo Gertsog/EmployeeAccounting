@@ -7,7 +7,7 @@
         x:Name="DepartmentWindow"
         d:DataContext="{d:DesignInstance local:DepartmentVM}"
         mc:Ignorable="d"
-        Title="{Binding WindowTitle}" Height="243" Width="502">
+        Title="Добавление отдела" Height="243" Width="502">
     <Grid Margin="0,0,0,0">
         <TextBlock Text="Введите название отдела:" HorizontalAlignment="Center" Margin="0,60,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190"/>
         <TextBox Text="{Binding DepartmentName}" HorizontalAlignment="Center" Margin="0,80,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="190" MaxWidth="190" Height="20" MaxHeight="20"/>

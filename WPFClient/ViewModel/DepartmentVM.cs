@@ -1,10 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using WPFClient.Database;
 
@@ -12,6 +8,8 @@ namespace WPFClient
 {
     public class DepartmentVM : NotifyPropertyChanged
     {
+        #region properties
+
         private EmployeeAccountingDbContext db;
 
         private ObservableCollection<Department> departments;
@@ -61,24 +59,13 @@ namespace WPFClient
             }
         }
 
-        private string windowTitle;
-        public string WindowTitle
-        {
-            get => windowTitle;
-            set
-            {
-                if (windowTitle != value)
-                {
-                    windowTitle = value;
-                    OnPropertyChanged(nameof(WindowTitle));
-                }
-            }
-        }
+        #endregion
+
+        #region ctor
 
         public DepartmentVM()
         {
             db = new EmployeeAccountingDbContext();
-            WindowTitle = "Добавление отдела";
             DialogText = "";
             DialogTextColor = "Black";
         }
@@ -88,13 +75,16 @@ namespace WPFClient
             Departments = departments;
         }
 
+        #endregion
+
+        #region commands
+
         private ICommand saveDepartment;
         public ICommand SaveDepartment => saveDepartment ??= new Command(() => TryAddDepartmentToDB());
 
-        private ICommand cancelAdding;
+        #endregion
 
-        public ICommand CancelAdding => cancelAdding ??= new Command(() => CloseWindow());
-
+        #region methods
 
         private void TryAddDepartmentToDB()
         {
@@ -106,20 +96,16 @@ namespace WPFClient
             }
             else
             {
-                DialogTextColor = "Black";
-                DialogText = "";
                 var department = new Database.Department() { Name = DepartmentName };
                 db.Departments.Add(department);
                 db.SaveChanges();
                 department = db.Departments.First(d => d.Name == DepartmentName);
                 Departments.Add(new Department(department.Id, department.Name));
+                DialogTextColor = "Black";
                 DialogText = "Сохранено!";
             }
         }
 
-        private void CloseWindow()
-        {
-
-        }
+        #endregion
     }
 }

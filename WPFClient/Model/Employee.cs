@@ -1,15 +1,105 @@
-﻿namespace WPFClient
+﻿using System.Windows.Controls;
+using System.Windows.Input;
+
+namespace WPFClient
 {
     public class Employee : NotifyPropertyChanged
     {
         private int id;
-        private string firstName;
+        public int Id
+        {
+            get => id;
+            set 
+            { 
+                id = value; 
+                OnPropertyChanged(nameof(Id)); 
+            }
+        }
+
         private string lastName;
+        public string LastName
+        {
+            get => lastName;
+            set 
+            { 
+                lastName = value; 
+                OnPropertyChanged(nameof(LastName)); 
+            }
+        }
+
+        private string firstName;
+        public string FirstName
+        {
+            get => firstName;
+            set
+            {
+                firstName = value;
+                OnPropertyChanged(nameof(FirstName));
+            }
+        }
+
         private string fatherName;
+        public string FatherName
+        {
+            get => fatherName;
+            set 
+            { 
+                fatherName = value; 
+                OnPropertyChanged(nameof(FatherName)); 
+            }
+        }
+
         private string position;
+        public string Position
+        {
+            get => position;
+            set
+            {
+                position = value;
+                OnPropertyChanged(nameof(Position));
+            }
+        }
+
         private double salary;
+        public double Salary
+        {
+            get => salary;
+            set
+            {
+                if (value < 0) //TODO: вызвать ошибку?
+                    salary = 0;
+                else
+                    salary = value;
+                OnPropertyChanged(nameof(Salary));
+            }
+        }
+
         private int departmentId;
+        public int DepartmentId
+        {
+            get => departmentId;
+            set 
+            { 
+                departmentId = value; 
+                OnPropertyChanged(nameof(DepartmentId)); 
+            }
+        }
+
         private string departmentName;
+        public string DepartmentName
+        {
+            get => departmentName;
+            set 
+            { 
+                departmentName = value; 
+                OnPropertyChanged(nameof(DepartmentName)); 
+            }
+        }
+
+        public Employee()
+        {
+
+        }
 
         public Employee(Database.Employee employee)
         {
@@ -23,83 +113,16 @@
             DepartmentName = employee.Department.Name;
         }
 
-        public int Id
+        public void IsAllowedInput(object sender, TextCompositionEventArgs e)
         {
-            get => id;
-            set 
-            { 
-                id = value; 
-                OnPropertyChanged("Id"); 
-            }
-        }
-        public string FirstName
-        {
-            get => firstName;
-            set 
-            { 
-                firstName = value; 
-                OnPropertyChanged("FirstName"); 
-            }
-        }
-        public string LastName
-        {
-            get => lastName;
-            set 
-            { 
-                lastName = value; 
-                OnPropertyChanged("LastName"); 
-            }
-        }
-        public string FatherName
-        {
-            get => fatherName;
-            set 
-            { 
-                fatherName = value; 
-                OnPropertyChanged("FatherName"); 
-            }
-        }
-        public string Position
-        {
-            get => position;
-            set
+            var textBox = (TextBox)sender;
+            if (!(char.IsDigit(e.Text, 0)
+                || ((e.Text == ".")
+                && !textBox.Text.Contains(".")
+                && textBox.Text.Length != 0)))
             {
-                position = value;
-                /*if (value == "Уволен") // TODO: сделать константу или хранилище с должностями
-                    salary = 0;*/
-                OnPropertyChanged("Position");
+                e.Handled = true;
             }
         }
-        public double Salary
-        {
-            get => salary;
-            set
-            {
-                if (value < 0) //TODO: вызвать ошибку
-                    salary = 0;
-                else
-                    salary = value;
-                OnPropertyChanged("Salary");
-            }
-        }
-        public int DepartmentId
-        {
-            get => departmentId;
-            set 
-            { 
-                departmentId = value; 
-                OnPropertyChanged("DepartmentId"); 
-            }
-        }
-        public string DepartmentName
-        {
-            get => departmentName;
-            set 
-            { 
-                departmentName = value; 
-                OnPropertyChanged("DepartmentName"); 
-            }
-        }
-
     }
 }

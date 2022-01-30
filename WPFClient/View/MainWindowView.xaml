@@ -7,7 +7,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         d:DataContext="{d:DesignInstance local:MainWindowVM}"
         mc:Ignorable="d"
-        Title="{Binding WindowTitle}" Height="450" Width="800">
+        Title="Система учета сотрудников" Height="450" Width="800">
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -19,12 +19,46 @@
     </i:Interaction.Triggers>
 
     <Grid Margin="0,0,0,0">
+        <Button Content="Добавить" Command="{Binding AddEmployee}" HorizontalAlignment="Left" Margin="82,26,0,0" VerticalAlignment="Top" Width="90"/>
+        <Grid DataContext="{Binding SelectedEmployee}"  Margin="0,60,540,183">
+            <TextBlock HorizontalAlignment="Left" Margin="30,0,0,0" TextWrapping="Wrap" Text="Фамилия" VerticalAlignment="Top"/>
+            <TextBox Text="{Binding Path=LastName }" HorizontalAlignment="Left" Margin="100,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <TextBlock HorizontalAlignment="Left" Margin="30,30,0,0" TextWrapping="Wrap" Text="Имя" VerticalAlignment="Top"/>
+            <TextBox Text="{Binding FirstName}" HorizontalAlignment="Left" Margin="100,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <TextBlock HorizontalAlignment="Left" Margin="30,60,0,0" TextWrapping="Wrap" Text="Отчество" VerticalAlignment="Top"/>
+            <TextBox Text="{Binding FatherName}" HorizontalAlignment="Left" Margin="100,60,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <TextBlock HorizontalAlignment="Left" Margin="30,90,0,0" TextWrapping="Wrap" Text="Отдел" VerticalAlignment="Top"/>
+            <TextBlock HorizontalAlignment="Left" Margin="30,120,0,0" TextWrapping="Wrap" Text="Позиция" VerticalAlignment="Top"/>
+            <TextBox Text="{Binding Position}" HorizontalAlignment="Left" Margin="100,120,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <TextBlock HorizontalAlignment="Left" Margin="30,150,0,0" TextWrapping="Wrap" Text="Оклад" VerticalAlignment="Top"/>
+            <TextBox Text="{Binding Salary, StringFormat=0.00}" HorizontalAlignment="Left" Margin="100,150,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewTextInput" >
+                        <i:CallMethodAction TargetObject="{Binding}" MethodName="IsAllowedInput" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </TextBox>
+        </Grid>
+
+        <ComboBox ItemsSource="{Binding Departments}"
+                  SelectedValue="{Binding SelectedEmployee.DepartmentName}"
+                  SelectedValuePath="Name"
+                  DisplayMemberPath="Name"
+                  HorizontalAlignment="Left" Margin="100,150,0,0" VerticalAlignment="Top" Width="120" />
+        <Button Content="+" Command="{Binding OpenDepartmentView}" HorizontalAlignment="Left" Margin="225,150,0,0" VerticalAlignment="Top" Width="23" Height="22"/>
+
+        <TextBlock Text="{Binding DialogText}"
+                   Foreground="{Binding DialogTextColor}" TextAlignment="Center" 
+                   HorizontalAlignment="Left" Margin="33,256,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="187"/>
+        <Button Content="Сохранить" Command="{Binding SaveEmployee}" HorizontalAlignment="Left" Margin="85,293,0,0" VerticalAlignment="Top" Width="90"/>
+        <Button Content="Удалить" Command="{Binding RemoveEmployeeCommand}" HorizontalAlignment="Left" Margin="85,318,0,0" VerticalAlignment="Top" Width="90"/>
+        <Button Content="Заполнить БД" Command="{Binding FillDb}" HorizontalAlignment="Left" Margin="85,373,0,0" VerticalAlignment="Top" Width="90"/>
         <TextBox Name="SearchTextBox" Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="269,31,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="299" Height="20"/>
         <Button Content="Поиск" Command="{Binding SearchButtonClick}" HorizontalAlignment="Left" Margin="573,31,0,0" VerticalAlignment="Top" Width="90"/>
-        
+
         <DataGrid Name="EmployeeGrid" 
                   ItemsSource="{Binding Employees, UpdateSourceTrigger=PropertyChanged}"
-                  SelectedItem="{Binding Path=SelectedEmployee, Mode=TwoWay}"
+                  SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
                   Margin="269,63,30,41" CanUserAddRows="False" HeadersVisibility="Column" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}"/>
@@ -36,32 +70,5 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <TextBlock HorizontalAlignment="Left" Margin="30,33,0,0" TextWrapping="Wrap" Text="Фамилия" VerticalAlignment="Top"/>
-        <TextBox Text="{Binding SelectedItem.LastName, ElementName=EmployeeGrid}" HorizontalAlignment="Left" Margin="100,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBlock HorizontalAlignment="Left" Margin="30,63,0,0" TextWrapping="Wrap" Text="Имя" VerticalAlignment="Top"/>
-        <TextBox Text="{Binding SelectedItem.FirstName, ElementName=EmployeeGrid}" HorizontalAlignment="Left" Margin="100,63,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBlock HorizontalAlignment="Left" Margin="30,93,0,0" TextWrapping="Wrap" Text="Отчество" VerticalAlignment="Top"/>
-        <TextBox Text="{Binding SelectedItem.FatherName, ElementName=EmployeeGrid}" HorizontalAlignment="Left" Margin="100,93,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBlock HorizontalAlignment="Left" Margin="30,123,0,0" TextWrapping="Wrap" Text="Отдел" VerticalAlignment="Top"/>
-        <ComboBox ItemsSource="{Binding Path=Departments}"
-                  SelectedValue="{Binding SelectedItem.DepartmentName, ElementName=EmployeeGrid}"
-                  SelectedValuePath="Name"
-                  DisplayMemberPath="Name"
-                  HorizontalAlignment="Left" Margin="100,123,0,0" VerticalAlignment="Top" Width="120" />
-        <TextBlock HorizontalAlignment="Left" Margin="30,153,0,0" TextWrapping="Wrap" Text="Позиция" VerticalAlignment="Top"/>
-        <TextBox Text="{Binding SelectedItem.Position, ElementName=EmployeeGrid}" HorizontalAlignment="Left" Margin="100,153,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBlock HorizontalAlignment="Left" Margin="30,183,0,0" TextWrapping="Wrap" Text="Оклад" VerticalAlignment="Top"/>
-        <TextBox Text="{Binding SelectedItem.Salary, ElementName=EmployeeGrid, StringFormat=0.00}" HorizontalAlignment="Left" Margin="100,183,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="PreviewTextInput" >
-                    <i:CallMethodAction TargetObject="{Binding}" MethodName="IsAllowedInput" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </TextBox>
-        <Button Content="+" Command="{Binding OpenDepartmentView}" HorizontalAlignment="Left" Margin="225,123,0,0" VerticalAlignment="Top" Width="23" Height="22"/>
-        <Button Content="Добавить" Command="{Binding AddEmployee}" HorizontalAlignment="Left" Margin="100,233,0,0" VerticalAlignment="Top" Width="90"/>
-        <Button Content="Сохранить" Command="{Binding SaveEmployee}" HorizontalAlignment="Left" Margin="100,263,0,0" VerticalAlignment="Top" Width="90"/>
-        <Button Content="Удалить" HorizontalAlignment="Left" Margin="100,293,0,0" VerticalAlignment="Top" Width="90"/>
-        <Button Content="Заполнить БД" Command="{Binding FillDb}" HorizontalAlignment="Left" Margin="100,373,0,0" VerticalAlignment="Top" Width="90"/>
     </Grid>
 </Window>
