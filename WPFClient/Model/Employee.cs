@@ -1,9 +1,10 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace WPFClient
 {
-    public class Employee : NotifyPropertyChanged
+    public class Employee : NotifyPropertyChanged, ICloneable
     {
         //Id сотрудника
         private int id;
@@ -134,6 +135,21 @@ namespace WPFClient
             {
                 e.Handled = true;
             }
+        }
+
+        public object Clone()
+        {
+            return new Employee()
+            {
+                Id = id,
+                LastName = lastName,
+                FirstName = firstName,
+                FatherName = fatherName,
+                Position = position,
+                Salary = salary,
+                DepartmentId = departmentId,
+                DepartmentName = departmentName
+            };
         }
     }
 }

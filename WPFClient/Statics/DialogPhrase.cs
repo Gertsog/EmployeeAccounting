@@ -12,5 +12,6 @@
         public const string LoadFromDbError = "Ошибка при чтении из БД";
         public const string SaveToDbError = "Ошибка при сохранении в БД";
         public const string DeleteFromDbError = "Ошибка при удалении из БД";
+        public const string DbConnectError = "Ошибка при подключении к БД";
     }
 }

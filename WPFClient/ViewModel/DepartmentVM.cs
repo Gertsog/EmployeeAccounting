@@ -83,7 +83,7 @@ namespace WPFClient
         public ICommand SaveDepartmentCommand => saveDepartmentCommand ??= new Command(() => TryAddDepartmentToDb());
 
         private ICommand windowClosedCommand;
-        public ICommand WindowClosedCommand => windowClosedCommand ??= new Command(() => DisposeDb());
+        public ICommand WindowClosedCommand => windowClosedCommand ??= new Command(() => db.Dispose());
 
         #endregion
 
@@ -103,7 +103,7 @@ namespace WPFClient
                 return;
             }
 
-            if (db.Departments.Any(d => d.Name == DepartmentName))
+            if (db.Departments.Any(d => d.Name.ToLower() == DepartmentName.ToLower()))
             {
                 DialogTextColor = Color.Red;
                 DialogText = DialogPhrase.DepartmentAlreadyExists;
@@ -126,11 +126,6 @@ namespace WPFClient
                     DialogText = DialogPhrase.SaveToDbError;
                 }
             }
-        }
-
-        private void DisposeDb()
-        {
-            db.Dispose();
         }
 
         #endregion

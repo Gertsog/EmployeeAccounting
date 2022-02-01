@@ -35,14 +35,28 @@ namespace WPFClient
             }
         }
 
+        //Выбранный работник из таблицы
         private Employee selectedEmployee;
         public Employee SelectedEmployee
         {
             get => selectedEmployee;
             set 
-            { 
+            {
                 selectedEmployee = value;
                 OnPropertyChanged(nameof(SelectedEmployee));
+                TempEmployee = (Employee)(value?.Clone()); //Выглядит как костыль, но ничего лучше я не придумал
+            }
+        }
+
+        //Временная копия для редактирования выбранного работника
+        private Employee tempEmployee;
+        public Employee TempEmployee
+        {
+            get => tempEmployee;
+            set
+            {
+                tempEmployee = value;
+                OnPropertyChanged(nameof(TempEmployee));
             }
         }
 
@@ -105,29 +119,59 @@ namespace WPFClient
         public ICommand WindowLoadedCommand => windowLoadedCommand ??= new Command(() => LoadInitialData());
 
         private ICommand windowClosedCommand;
-        public ICommand WindowClosedCommand => windowClosedCommand ??= new Command(() => DisposeDb());
+        public ICommand WindowClosedCommand => windowClosedCommand ??= new Command(() => db.Dispose());
+
+        private ICommand searchCommand;
+        public ICommand SearchCommand => searchCommand ??= new Command(() => LoadEmployees());
+
+        //Сброс поиска
+        private ICommand clearSearchCommand;
+        public ICommand ClearSearchCommand => clearSearchCommand ??= new Command(() => 
+            {
+                SearchText = "";
+                LoadEmployees();
+            }
+        );
 
         private ICommand fillDbCommand;
         public ICommand FillDbCommand => fillDbCommand ??= new Command(() => FillDbWithRandomEmployees());
 
-        private ICommand searchCommand;
-        public ICommand SearchCommand => searchCommand ??= new Command(() => Search());
+        private ICommand addEmployeeCommand;
+        public ICommand AddEmployeeCommand => addEmployeeCommand ??= new Command(() => AddEmployee());
 
         private ICommand saveEmployeeCommand;
         public ICommand SaveEmployeeCommand => saveEmployeeCommand ??= new Command(() => SaveSelectedEmployee());
 
-        private ICommand openDepartmentViewCommand;
-        public ICommand OpenDepartmentViewCommand => openDepartmentViewCommand ??= new Command(() => OpenDepartmentView());
-
-        private ICommand addEmployeeCommand;
-        public ICommand AddEmployeeCommand => addEmployeeCommand ??= new Command(() => AddEmployee());
-
         private ICommand removeEmployeeCommand;
         public ICommand RemoveEmployeeCommand => removeEmployeeCommand ??= new Command(() => RemoveEmployee());
+
+        // Открытие окна для добавления отделов
+        private ICommand openDepartmentViewCommand;
+        public ICommand OpenDepartmentViewCommand => openDepartmentViewCommand ??= new Command(() => 
+            new DepartmentView(new DepartmentVM(Departments)).Show()
+        );
 
         #endregion
 
         #region methods
+
+        //Загрузка данных при запуске приложения
+        private void LoadInitialData()
+        {
+            try
+            {
+                if (!db.Database.CanConnect())
+                {
+                    db.Database.EnsureCreated();
+                }
+                RefillCollections();
+            }
+            catch
+            {
+                DialogTextColor = Color.Red;
+                DialogText = DialogPhrase.DbConnectError;
+            }
+        }
 
         //Перезаполнение коллекций для обновления данных на вью
         private void RefillCollections()
@@ -146,14 +190,25 @@ namespace WPFClient
             Departments = new ObservableCollection<Department>(departmentsList);
         }
 
+        //Подгрузка сотрудников с фильтрацией
         private void LoadEmployees()
         {
             db.Employees.Load();
+            int id = SelectedEmployee?.Id ?? default;
+            string text = searchText.ToLower();
             var employeesList = db.Employees
                 .Select(e => new Employee(e))
                 .ToList()
+                .Where(e =>
+                    e.LastName.ToLower().Contains(text) ||
+                    e.FirstName.ToLower().Contains(text) ||
+                    e.FatherName.ToLower().Contains(text))
                 .OrderBy(e => e.LastName);
             Employees = new ObservableCollection<Employee>(employeesList);
+            if (id != default)
+            {
+                SelectedEmployee = Employees.FirstOrDefault(e => e.Id == id);
+            }
         }
 
         //Подсказка "как добавить сотрудника"
@@ -179,7 +234,7 @@ namespace WPFClient
             dbEmployee.FatherName = employee.FatherName;
             dbEmployee.Position = employee.Position;
             dbEmployee.Salary = employee.Salary;
-            dbEmployee.DepartmentId = Departments.First(d => d.Name == SelectedEmployee.DepartmentName).Id;
+            dbEmployee.DepartmentId = Departments.First(d => d.Name == employee.DepartmentName).Id;
         }
 
         //Проверка на наличие незаполненных строковых свойств
@@ -187,7 +242,7 @@ namespace WPFClient
         {
             return employee.GetType().GetProperties()
                 .Where(p => p.PropertyType == typeof(string))
-                .Select(p => p.GetValue(SelectedEmployee) as string)
+                .Select(p => p.GetValue(employee) as string)
                 .Any(value => string.IsNullOrEmpty(value));
         }
         
@@ -196,12 +251,8 @@ namespace WPFClient
         {
             Database.Employee currentEmployee;
 
-            if (SelectedEmployee == null)
-            {
-                SelectedEmployee = new Employee();
-            }
-
-            if (HasEmployeeEmptyProperties(SelectedEmployee))
+            TempEmployee ??= new Employee();
+            if (HasEmployeeEmptyProperties(TempEmployee))
             {
                 DialogTextColor = Color.Red;
                 DialogText = DialogPhrase.FillTheFields;
@@ -210,6 +261,7 @@ namespace WPFClient
 
             try
             {
+                SelectedEmployee = TempEmployee;
                 if (SelectedEmployee.Id != default)
                 {
                     currentEmployee = db.Employees.First(e => e.Id == SelectedEmployee.Id);
@@ -217,6 +269,7 @@ namespace WPFClient
                     MapEmployee(SelectedEmployee, currentEmployee);
                     db.Update(currentEmployee);
                     db.SaveChanges();
+                    LoadEmployees();
                 }
                 else
                 {
@@ -224,40 +277,16 @@ namespace WPFClient
                     MapEmployee(SelectedEmployee, currentEmployee);
                     db.Add(currentEmployee);
                     db.SaveChanges();
-                    RefillCollections();
+                    LoadEmployees();
                 }
                 DialogTextColor = Color.Black;
                 DialogText = DialogPhrase.Saved;
-                SelectedEmployee = Employees.First(e => e.Id == currentEmployee.Id);
             }
             catch
             {
                 DialogTextColor = Color.Red;
                 DialogText = DialogPhrase.SaveToDbError;
             }
-        }
-
-        //Заполнение базы сгенерированными сотрудниками
-        private async Task FillDbWithRandomEmployees() 
-        {
-            await Task.Run(() =>
-            {
-                var rdg = new RandomDataGenerator(db);
-                rdg.GenerateRandomEmployees();
-                RefillCollections();
-                DialogTextColor = Color.Black;
-                DialogText = DialogPhrase.RandomEmployeesGenerated;
-            });            
-        }
-
-        //Загрузка данных при запуске приложения
-        private void LoadInitialData()
-        { 
-            if (!db.Database.CanConnect())
-            {
-                db.Database.EnsureCreated();
-            }
-            RefillCollections();
         }
 
         //Удаление сотрудника из базы
@@ -267,18 +296,19 @@ namespace WPFClient
             {
                 try
                 {
-                    var currentEmployee = db.Employees.First(e => e.Id == SelectedEmployee.Id);
+                    int employeeId = SelectedEmployee.Id;
+                    var currentEmployee = db.Employees.First(e => e.Id == employeeId);
                     if (currentEmployee != null)
                     {
+                        Employees.Remove(Employees.First(e => e.Id == employeeId));
                         db.Remove(currentEmployee);
                         db.SaveChanges();
-                        RefillCollections();
                         DialogTextColor = Color.Black;
                         DialogText = DialogPhrase.EmployeeDeleted;
                         return;
                     }
                 }
-                catch 
+                catch
                 {
                     DialogTextColor = Color.Red;
                     DialogText = DialogPhrase.DeleteFromDbError;
@@ -290,32 +320,16 @@ namespace WPFClient
             DialogText = DialogPhrase.EmployeeDoesntExist;
         }
 
-        private void DisposeDb()
+        //Заполнение базы сгенерированными сотрудниками (для упрощения тестирования)
+        private void FillDbWithRandomEmployees() 
         {
-            db.Dispose();
-        }
-
-        //Поиск среди сотрудников по ФИО
-        private void Search()
-        {
-            LoadEmployees();
-
-            string text = searchText.ToLower();
-            var filteredEmployees = Employees.Where(e =>
-                    e.LastName.ToLower().Contains(text) ||
-                    e.FirstName.ToLower().Contains(text) ||
-                    e.FatherName.ToLower().Contains(text))
-                .ToList()
-                .OrderBy(e => e.LastName);
-            Employees = new ObservableCollection<Employee>(filteredEmployees);
-        }
-
-        //Открытие окна добавления отделов
-        private void OpenDepartmentView()
-        {
-            var departmentVM = new DepartmentVM(Departments);
-            var departmentView = new DepartmentView(departmentVM);
-            departmentView.Show();
+            int currentEmployeeId = TempEmployee.Id;
+            var rdg = new RandomDataGenerator(db);
+            rdg.GenerateRandomEmployees();
+            RefillCollections();
+            SelectedEmployee = Employees.First(e => e.Id == currentEmployeeId);
+            DialogTextColor = Color.Black;
+            DialogText = DialogPhrase.RandomEmployeesGenerated;
         }
 
         #endregion

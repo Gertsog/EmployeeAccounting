@@ -2,18 +2,12 @@
 
 namespace WPFClient.Database
 {
-    // ПРИМЕЧАНИЕ. Команду "Переименовать" в меню "Рефакторинг" можно использовать для одновременного изменения имени класса "MyDbContext" в коде и файле конфигурации.
     public class EmployeeAccountingDbContext : DbContext
     {
         private string sqlServerName = "LAPTOP-OQ8825HM\\SQLEXPRESS";
         private string dbName = "EmployeeAccounting";
         
         public EmployeeAccountingDbContext()
-        {
-        }
-
-        public EmployeeAccountingDbContext(DbContextOptions<EmployeeAccountingDbContext> options)
-            : base(options)
         {
         }
 
