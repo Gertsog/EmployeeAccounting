@@ -155,7 +155,7 @@ namespace WPFClient
         {
             DialogTextColor = Color.Black;
             DialogText = DialogPhrase.FillAndSave;
-            if (!HasEmployeeEmptyProperties(SelectedEmployee))
+            if (SelectedEmployee == null || !HasEmployeeEmptyProperties(SelectedEmployee))
             {
                 SelectedEmployee = new Employee();
             }
@@ -176,8 +176,8 @@ namespace WPFClient
         private bool HasEmployeeEmptyProperties(Employee employee)
         {
             return employee.GetType().GetProperties()
-                .Where(pi => pi.PropertyType == typeof(string))
-                .Select(pi => pi.GetValue(SelectedEmployee) as string)
+                .Where(p => p.PropertyType == typeof(string))
+                .Select(p => p.GetValue(SelectedEmployee) as string)
                 .Any(value => string.IsNullOrEmpty(value));
         }
         
@@ -185,6 +185,11 @@ namespace WPFClient
         private void SaveSelectedEmployee()
         {
             Database.Employee currentEmployee;
+
+            if (SelectedEmployee == null)
+            {
+                SelectedEmployee = new Employee();
+            }
 
             if (HasEmployeeEmptyProperties(SelectedEmployee))
             {
@@ -205,12 +210,10 @@ namespace WPFClient
                 else
                 {
                     currentEmployee = new Database.Employee();
-                    {
-                        MapEmployee(SelectedEmployee, currentEmployee);
-                        db.Add(currentEmployee);
-                        DialogTextColor = Color.Black;
-                        DialogText = DialogPhrase.Saved;
-                    }
+                    MapEmployee(SelectedEmployee, currentEmployee);
+                    db.Add(currentEmployee);
+                    DialogTextColor = Color.Black;
+                    DialogText = DialogPhrase.Saved;
                 }
                 db.SaveChanges();
                 RefillCollections();
@@ -226,7 +229,7 @@ namespace WPFClient
         //Заполнение базы сгенерированными сотрудниками
         private async Task FillDbWithRandomEmployees() 
         {
-            await new Task(() =>
+            await Task.Run(() =>
             {
                 var rdg = new RandomDataGenerator(db);
                 rdg.GenerateRandomEmployees();
@@ -287,8 +290,7 @@ namespace WPFClient
             LoadEmployees();
 
             string text = searchText.ToLower();
-            var filteredEmployees = 
-                Employees.Where(e =>
+            var filteredEmployees = Employees.Where(e =>
                     e.LastName.ToLower().Contains(text) ||
                     e.FirstName.ToLower().Contains(text) ||
                     e.FatherName.ToLower().Contains(text))

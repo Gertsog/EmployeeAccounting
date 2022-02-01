@@ -51,13 +51,12 @@ namespace WPFClient.Database
 
             var request = WebRequest.Create(url + requestParams + dataParams);
             var response = request.GetResponse();
-            string responseStirng;
             var employees = new List<Employee>();
 
             using (Stream dataStream = response.GetResponseStream())
             {
                 var js = new JavaScriptSerializer();
-                responseStirng = new StreamReader(dataStream).ReadToEnd();
+                string responseStirng = new StreamReader(dataStream).ReadToEnd();
                 employees = js.Deserialize<List<Employee>>(responseStirng);
             }
             response.Close();
@@ -66,7 +65,7 @@ namespace WPFClient.Database
             {
                 var random = new Random();
                 int randomInt = random.Next(0, 15);
-                int index = (randomInt % 5 == 0) ? 2 : randomInt % 2;
+                int index = (randomInt % 5 == 0) ? 2 : (randomInt % 2);
                 employees[i].DepartmentId = db.Departments.First(d => d.Name == departmentNames[index]).Id;
                 employees[i].Position = positions[index];
                 employees[i].Salary = random.NextDouble() * (120000 - 30000) + 30000;
