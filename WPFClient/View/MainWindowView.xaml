@@ -60,10 +60,11 @@
         </TextBox>
         <Button Content="Поиск" Command="{Binding SearchCommand}" HorizontalAlignment="Left" Margin="573,31,0,0" VerticalAlignment="Top" Width="90"/>
 
-        <DataGrid Name="EmployeeGrid" 
-                  ItemsSource="{Binding Employees, UpdateSourceTrigger=PropertyChanged}"
-                  SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
-                  Margin="269,63,30,41" CanUserAddRows="False" HeadersVisibility="Column" AutoGenerateColumns="False">
+        <DataGrid ItemsSource="{Binding Employees, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}" 
+                  CanUserAddRows="False" HeadersVisibility="Column" AutoGenerateColumns="False" 
+                  IsReadOnly="True" SelectionMode="Single" SelectionUnit="FullRow"
+                  Margin="269,63,30,41">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}"/>
                 <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}"/>

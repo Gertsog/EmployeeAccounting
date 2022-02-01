@@ -139,20 +139,30 @@ namespace WPFClient
         private void LoadDeaprtments()
         {
             db.Departments.Load();
-            var departmentsList = db.Departments.Select(d => new Department(d.Id, d.Name)).ToList();
+            var departmentsList = db.Departments
+                .Select(d => new Department(d.Id, d.Name))
+                .ToList()
+                .OrderBy(d => d.Name);
             Departments = new ObservableCollection<Department>(departmentsList);
         }
 
         private void LoadEmployees()
         {
             db.Employees.Load();
-            var employeesList = db.Employees.Select(e => new Employee(e)).ToList();
+            var employeesList = db.Employees
+                .Select(e => new Employee(e))
+                .ToList()
+                .OrderBy(e => e.LastName);
             Employees = new ObservableCollection<Employee>(employeesList);
         }
 
         //Подсказка "как добавить сотрудника"
         private void AddEmployee()
         {
+            if (SelectedEmployee != null && SelectedEmployee.Id != default)
+            {
+                SelectedEmployee = null;
+            }
             DialogTextColor = Color.Black;
             DialogText = DialogPhrase.FillAndSave;
             if (SelectedEmployee == null || !HasEmployeeEmptyProperties(SelectedEmployee))
@@ -206,17 +216,18 @@ namespace WPFClient
                     currentEmployee.Id = SelectedEmployee.Id;
                     MapEmployee(SelectedEmployee, currentEmployee);
                     db.Update(currentEmployee);
+                    db.SaveChanges();
                 }
                 else
                 {
                     currentEmployee = new Database.Employee();
                     MapEmployee(SelectedEmployee, currentEmployee);
                     db.Add(currentEmployee);
-                    DialogTextColor = Color.Black;
-                    DialogText = DialogPhrase.Saved;
+                    db.SaveChanges();
+                    RefillCollections();
                 }
-                db.SaveChanges();
-                RefillCollections();
+                DialogTextColor = Color.Black;
+                DialogText = DialogPhrase.Saved;
                 SelectedEmployee = Employees.First(e => e.Id == currentEmployee.Id);
             }
             catch
@@ -294,7 +305,8 @@ namespace WPFClient
                     e.LastName.ToLower().Contains(text) ||
                     e.FirstName.ToLower().Contains(text) ||
                     e.FatherName.ToLower().Contains(text))
-                .ToList();
+                .ToList()
+                .OrderBy(e => e.LastName);
             Employees = new ObservableCollection<Employee>(filteredEmployees);
         }
 

@@ -82,6 +82,9 @@ namespace WPFClient
         private ICommand saveDepartmentCommand;
         public ICommand SaveDepartmentCommand => saveDepartmentCommand ??= new Command(() => TryAddDepartmentToDb());
 
+        private ICommand windowClosedCommand;
+        public ICommand WindowClosedCommand => windowClosedCommand ??= new Command(() => DisposeDb());
+
         #endregion
 
         #region methods
@@ -123,6 +126,11 @@ namespace WPFClient
                     DialogText = DialogPhrase.SaveToDbError;
                 }
             }
+        }
+
+        private void DisposeDb()
+        {
+            db.Dispose();
         }
 
         #endregion
