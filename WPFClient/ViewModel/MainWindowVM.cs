@@ -268,17 +268,15 @@ namespace WPFClient
                     currentEmployee.Id = SelectedEmployee.Id;
                     MapEmployee(SelectedEmployee, currentEmployee);
                     db.Update(currentEmployee);
-                    db.SaveChanges();
-                    LoadEmployees();
                 }
                 else
                 {
                     currentEmployee = new Database.Employee();
                     MapEmployee(SelectedEmployee, currentEmployee);
                     db.Add(currentEmployee);
-                    db.SaveChanges();
-                    LoadEmployees();
                 }
+                db.SaveChanges();
+                LoadEmployees();
                 DialogTextColor = Color.Black;
                 DialogText = DialogPhrase.Saved;
             }
@@ -323,11 +321,9 @@ namespace WPFClient
         //Заполнение базы сгенерированными сотрудниками (для упрощения тестирования)
         private void FillDbWithRandomEmployees() 
         {
-            int currentEmployeeId = TempEmployee.Id;
             var rdg = new RandomDataGenerator(db);
             rdg.GenerateRandomEmployees();
             RefillCollections();
-            SelectedEmployee = Employees.First(e => e.Id == currentEmployeeId);
             DialogTextColor = Color.Black;
             DialogText = DialogPhrase.RandomEmployeesGenerated;
         }
