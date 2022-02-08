@@ -7,8 +7,8 @@ namespace WPFClient
     public class Employee : NotifyPropertyChanged, ICloneable
     {
         //Id сотрудника
-        private int id;
-        public int Id
+        private ulong id;
+        public ulong Id
         {
             get => id;
             set 
@@ -67,8 +67,8 @@ namespace WPFClient
         }
 
         //Оклад
-        private double salary;
-        public double Salary
+        private decimal salary;
+        public decimal Salary
         {
             get => salary;
             set
@@ -82,8 +82,8 @@ namespace WPFClient
         }
 
         //Id отдела
-        private int departmentId;
-        public int DepartmentId
+        private ulong departmentId;
+        public ulong DepartmentId
         {
             get => departmentId;
             set 

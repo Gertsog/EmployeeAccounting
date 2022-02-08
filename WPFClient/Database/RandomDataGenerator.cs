@@ -11,7 +11,7 @@ namespace WPFClient.Database
     // Класс для генерации случайных сотрудников с помощью API
     public class RandomDataGenerator
     {
-        readonly EmployeeAccountingDbContext db;
+        readonly ApplicationDbContext db;
 
         string[] positions = { "Разработчик", "Девопс", "Бухгалтер" };
         string[] departmentNames = { "Разработка", "Сопровождение", "Бухгалтерия" };
@@ -20,7 +20,7 @@ namespace WPFClient.Database
         string requestParams = "?count=50&gender=unset&typeName=all&unescaped=false";
         string dataParams = "&params=LastName,FirstName,FatherName";
 
-        public RandomDataGenerator(EmployeeAccountingDbContext context) 
+        public RandomDataGenerator(ApplicationDbContext context) 
         {
             db = context;
         }
@@ -68,7 +68,7 @@ namespace WPFClient.Database
                 int index = (randomInt % 5 == 0) ? 2 : (randomInt % 2);
                 employees[i].DepartmentId = db.Departments.First(d => d.Name == departmentNames[index]).Id;
                 employees[i].Position = positions[index];
-                employees[i].Salary = random.NextDouble() * (120000 - 30000) + 30000;
+                employees[i].Salary = (decimal)random.NextDouble() * (120000 - 30000) + 30000;
             }
 
             db.AddRange(employees);

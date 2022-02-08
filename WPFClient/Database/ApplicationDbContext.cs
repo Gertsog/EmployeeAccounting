@@ -2,12 +2,12 @@
 
 namespace WPFClient.Database
 {
-    public class EmployeeAccountingDbContext : DbContext
+    public class ApplicationDbContext : DbContext
     {
         private string sqlServerName = "LAPTOP-OQ8825HM\\SQLEXPRESS";
         private string dbName = "EmployeeAccounting";
         
-        public EmployeeAccountingDbContext()
+        public ApplicationDbContext()
         {
         }
 

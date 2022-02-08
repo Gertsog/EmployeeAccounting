@@ -3,8 +3,8 @@
     public class Department : NotifyPropertyChanged
     {
         //Id отдела
-        private int id;
-        public int Id
+        private ulong id;
+        public ulong Id
         {
             get => id;
             set
@@ -31,7 +31,7 @@
             Name = name;
         }
 
-        public Department(int id, string name) : this(name)
+        public Department(ulong id, string name) : this(name)
         {
             Id = id;
         }

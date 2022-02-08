@@ -12,7 +12,7 @@ namespace WPFClient
     {
         #region properties
 
-        private readonly EmployeeAccountingDbContext db;
+        private readonly ApplicationDbContext db;
 
         private ObservableCollection<Employee> employees;
         public ObservableCollection<Employee> Employees
@@ -102,7 +102,7 @@ namespace WPFClient
 
         public MainWindowVM()
         {
-            db = new EmployeeAccountingDbContext();
+            db = new ApplicationDbContext();
             Employees = new ObservableCollection<Employee>();
             Departments = new ObservableCollection<Department>();
             SelectedEmployee = new Employee();
@@ -194,7 +194,7 @@ namespace WPFClient
         private void LoadEmployees()
         {
             db.Employees.Load();
-            int id = SelectedEmployee?.Id ?? default;
+            ulong id = SelectedEmployee?.Id ?? default;
             string text = searchText.ToLower();
             var employeesList = db.Employees
                 .Select(e => new Employee(e))
@@ -294,7 +294,7 @@ namespace WPFClient
             {
                 try
                 {
-                    int employeeId = SelectedEmployee.Id;
+                    ulong employeeId = SelectedEmployee.Id;
                     var currentEmployee = db.Employees.First(e => e.Id == employeeId);
                     if (currentEmployee != null)
                     {

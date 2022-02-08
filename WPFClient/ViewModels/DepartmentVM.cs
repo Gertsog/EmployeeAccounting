@@ -10,7 +10,7 @@ namespace WPFClient
     {
         #region properties
 
-        private readonly EmployeeAccountingDbContext db;
+        private readonly ApplicationDbContext db;
 
         private ObservableCollection<Department> departments;
         public ObservableCollection<Department> Departments
@@ -65,7 +65,7 @@ namespace WPFClient
 
         public DepartmentVM()
         {
-            db = new EmployeeAccountingDbContext();
+            db = new ApplicationDbContext();
             DialogText = "";
             DialogTextColor = Color.Black;
         }
