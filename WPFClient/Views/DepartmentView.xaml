@@ -5,15 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFClient" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         x:Name="DepartmentWindow"
-        d:DataContext="{d:DesignInstance local:DepartmentVM}"
+        d:DataContext="{d:DesignInstance local:ApplicationVM}"
         mc:Ignorable="d"
         Title="Добавление отдела" Height="243" Width="502">
-
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Closing">
-            <i:InvokeCommandAction Command="{Binding WindowClosedCommand}"/>
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
     
     <Grid Margin="0,0,0,0">
         <TextBlock Text="Введите название отдела:" HorizontalAlignment="Center" Margin="0,60,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190"/>

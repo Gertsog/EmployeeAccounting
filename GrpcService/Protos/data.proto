@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcService.Protos";
+
+service Data {
+    rpc AddEmployee (EmployeeRequest) returns (StatusResponse);
+    rpc AddDepartment (DepartmentRequest) returns (StatusResponse);
+    rpc LoadDepartments (Empty) returns (DepartmentsResponse);
+    rpc LoadEmployees (Empty) returns (EmployeesResponse);
+    rpc RemoveEmployee (EmployeeRequest) returns (StatusResponse);
+    rpc UpdateEmployee (EmployeeRequest) returns (StatusResponse);
+    rpc GenerateRandomEmployees (Empty) returns (StatusResponse);
+    rpc CheckConnection (Empty) returns (StatusResponse);
+    rpc CreateDB (Empty) returns (StatusResponse);
+}
+
+message Empty {}
+
+message Department {
+    uint64 id = 1;
+	string name = 2;
+}
+
+message DepartmentRequest {
+    Department department = 1;
+}
+
+message DepartmentsResponse {
+	repeated Department departments = 1;
+}
+
+message Employee {
+    uint64 id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string father_name = 4;
+    string position = 5;
+    DecimalValue salary = 6;
+    uint64 department_id = 7;
+    string department_name = 8;
+}
+
+message EmployeeRequest {
+    Employee employee = 1;
+}
+
+message EmployeesResponse {
+	repeated Employee employees = 1;
+}
+
+message StatusResponse {
+    int32 status_code = 1;
+}
+
+message DecimalValue {
+
+    // Whole units part of the amount
+    int64 units = 1;
+
+    // Nano units of the amount (10^-9)
+    // Must be same sign as units
+    sfixed32 nanos = 2;
+}

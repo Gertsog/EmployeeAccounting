@@ -1,14 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DB.Data;
+using Microsoft.EntityFrameworkCore;
 
-namespace WPFClient.Database
+namespace DB
 {
-    public class ApplicationDbContext : DbContext
+    public class SqlDbContext : DbContext
     {
-        private string sqlServerName = "LAPTOP-OQ8825HM\\SQLEXPRESS";
-        private string dbName = "EmployeeAccounting";
-        
-        public ApplicationDbContext()
+        private string _connectionString;
+
+        public SqlDbContext(string connectionString)
         {
+            _connectionString = connectionString;
         }
 
         public DbSet<Employee> Employees { get; set; }
@@ -16,10 +17,9 @@ namespace WPFClient.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer($"Server = {sqlServerName}; Database = {dbName}; Trusted_Connection = True; ");
+                optionsBuilder.UseSqlServer(_connectionString);
             }
         }
 

@@ -4,9 +4,9 @@ namespace WPFClient
 {
     public partial class MainWindowView : Window
     {
-        private MainWindowVM vm;
+        private ApplicationVM vm;
 
-        public MainWindowView(MainWindowVM vm)
+        public MainWindowView(ApplicationVM vm)
         {
             InitializeComponent();
             DataContext = this.vm = vm;

@@ -1,24 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using WPFClient.Database;
 
-//Client - потому что изначально планировалось клиент-серверное приложение, но что-то пошло не так
 namespace WPFClient
 {
-    public class MainWindowVM : NotifyPropertyChanged
+    public class ApplicationVM : NotifyPropertyChanged
     {
         #region properties
 
-        private readonly ApplicationDbContext db;
+        private readonly IServiceConnector _serviceConnector;
 
         private ObservableCollection<Employee> employees;
         public ObservableCollection<Employee> Employees
         {
             get => employees;
-            set { 
+            set
+            {
                 employees = value;
                 OnPropertyChanged(nameof(Employees));
             }
@@ -35,12 +36,23 @@ namespace WPFClient
             }
         }
 
+        private string departmentName;
+        public string DepartmentName
+        {
+            get => departmentName;
+            set
+            {
+                departmentName = value;
+                OnPropertyChanged(nameof(DepartmentName));
+            }
+        }
+
         //Выбранный работник из таблицы
         private Employee selectedEmployee;
         public Employee SelectedEmployee
         {
             get => selectedEmployee;
-            set 
+            set
             {
                 selectedEmployee = value;
                 OnPropertyChanged(nameof(SelectedEmployee));
@@ -100,9 +112,9 @@ namespace WPFClient
 
         #region ctor
 
-        public MainWindowVM()
+        public ApplicationVM(IServiceConnector serviceConnector)
         {
-            db = new ApplicationDbContext();
+            _serviceConnector = serviceConnector;
             Employees = new ObservableCollection<Employee>();
             Departments = new ObservableCollection<Department>();
             SelectedEmployee = new Employee();
@@ -116,55 +128,58 @@ namespace WPFClient
         #region commands
 
         private ICommand windowLoadedCommand;
-        public ICommand WindowLoadedCommand => windowLoadedCommand ??= new Command(() => LoadInitialData());
-
-        private ICommand windowClosedCommand;
-        public ICommand WindowClosedCommand => windowClosedCommand ??= new Command(() => db.Dispose());
+        public ICommand WindowLoadedCommand => windowLoadedCommand ??= new Command(async () => await LoadInitialDataAsync());
 
         private ICommand searchCommand;
-        public ICommand SearchCommand => searchCommand ??= new Command(() => LoadEmployees());
+        public ICommand SearchCommand => searchCommand ??= new Command(async () => await LoadEmployeesAsync());
 
         //Сброс поиска
         private ICommand clearSearchCommand;
-        public ICommand ClearSearchCommand => clearSearchCommand ??= new Command(() => 
+        public ICommand ClearSearchCommand => clearSearchCommand ??= new Command(async () =>
             {
                 SearchText = "";
-                LoadEmployees();
+                await LoadEmployeesAsync();
             }
         );
 
         private ICommand fillDbCommand;
-        public ICommand FillDbCommand => fillDbCommand ??= new Command(() => FillDbWithRandomEmployees());
+        public ICommand FillDbCommand => fillDbCommand ??= new Command(async () => await FillDbWithRandomEmployeesAsync());
 
         private ICommand addEmployeeCommand;
         public ICommand AddEmployeeCommand => addEmployeeCommand ??= new Command(() => AddEmployee());
 
         private ICommand saveEmployeeCommand;
-        public ICommand SaveEmployeeCommand => saveEmployeeCommand ??= new Command(() => SaveSelectedEmployee());
+        public ICommand SaveEmployeeCommand => saveEmployeeCommand ??= new Command(async () => await SaveSelectedEmployeeAsync());
 
         private ICommand removeEmployeeCommand;
-        public ICommand RemoveEmployeeCommand => removeEmployeeCommand ??= new Command(() => RemoveEmployee());
+        public ICommand RemoveEmployeeCommand => removeEmployeeCommand ??= new Command(async () => await RemoveEmployeeAsync());
 
         // Открытие окна для добавления отделов
         private ICommand openDepartmentViewCommand;
-        public ICommand OpenDepartmentViewCommand => openDepartmentViewCommand ??= new Command(() => 
-            new DepartmentView(new DepartmentVM(Departments)).Show()
+        public ICommand OpenDepartmentViewCommand => openDepartmentViewCommand ??= new Command(() =>
+            new DepartmentView(this).Show()
         );
+
+        private ICommand saveDepartmentCommand;
+        public ICommand SaveDepartmentCommand => saveDepartmentCommand ??= new Command(async () => await TryAddDepartmentToDbAsync());
 
         #endregion
 
         #region methods
 
         //Загрузка данных при запуске приложения
-        private void LoadInitialData()
+        private async Task LoadInitialDataAsync()
         {
             try
             {
-                if (!db.Database.CanConnect())
+                var result = await _serviceConnector.CheckConnectionAsync();
+                if (result != 200)
                 {
-                    db.Database.EnsureCreated();
+                    result = await _serviceConnector.CreateDBAsync();
+                    if (result != 200)
+                        throw new Exception();
                 }
-                RefillCollections();
+                await RefillCollectionsAsync();
             }
             catch
             {
@@ -174,16 +189,16 @@ namespace WPFClient
         }
 
         //Перезаполнение коллекций для обновления данных на вью
-        private void RefillCollections()
+        private async Task RefillCollectionsAsync()
         {
-            LoadDeaprtments();
-            LoadEmployees();
+            await LoadDeaprtmentsAsync();
+            await LoadEmployeesAsync();
         }
 
-        private void LoadDeaprtments()
+        private async Task LoadDeaprtmentsAsync()
         {
-            db.Departments.Load();
-            var departmentsList = db.Departments
+            var departments = await _serviceConnector.GetDepartmentsAsync();
+            var departmentsList = departments
                 .Select(d => new Department(d.Id, d.Name))
                 .ToList()
                 .OrderBy(d => d.Name);
@@ -191,12 +206,14 @@ namespace WPFClient
         }
 
         //Подгрузка сотрудников с фильтрацией
-        private void LoadEmployees()
+        private async Task LoadEmployeesAsync()
         {
-            db.Employees.Load();
+            //_db.Departments.Load();
+            //_db.Employees.Load();
+            var employees = await _serviceConnector.GetEmployeesAsync();
             ulong id = SelectedEmployee?.Id ?? default;
             string text = searchText.ToLower();
-            var employeesList = db.Employees
+            var employeesList = employees
                 .Select(e => new Employee(e))
                 .ToList()
                 .Where(e =>
@@ -226,15 +243,15 @@ namespace WPFClient
             }
         }
 
-        //Маппинг класса в сущность EF
-        private void MapEmployee(Employee employee, Database.Employee dbEmployee)
+        private void MapEmployee(Employee employee, Common.Models.Employee dbEmployee)
         {
             dbEmployee.LastName = employee.LastName;
             dbEmployee.FirstName = employee.FirstName;
             dbEmployee.FatherName = employee.FatherName;
             dbEmployee.Position = employee.Position;
             dbEmployee.Salary = employee.Salary;
-            dbEmployee.DepartmentId = Departments.First(d => d.Name == employee.DepartmentName).Id;
+            dbEmployee.DepartmentId = employee.DepartmentId;
+            dbEmployee.DepartmentName = employee.DepartmentName;
         }
 
         //Проверка на наличие незаполненных строковых свойств
@@ -245,11 +262,11 @@ namespace WPFClient
                 .Select(p => p.GetValue(employee) as string)
                 .Any(value => string.IsNullOrEmpty(value));
         }
-        
+
         //Сохранение текущего сотрудника в базу
-        private void SaveSelectedEmployee()
+        private async Task SaveSelectedEmployeeAsync()
         {
-            Database.Employee currentEmployee;
+            Common.Models.Employee currentEmployee;
 
             TempEmployee ??= new Employee();
             if (HasEmployeeEmptyProperties(TempEmployee))
@@ -264,19 +281,19 @@ namespace WPFClient
                 SelectedEmployee = TempEmployee;
                 if (SelectedEmployee.Id != default)
                 {
-                    currentEmployee = db.Employees.First(e => e.Id == SelectedEmployee.Id);
+                    var employees = await _serviceConnector.GetEmployeesAsync();
+                    currentEmployee = employees.First(e => e.Id == SelectedEmployee.Id);
                     currentEmployee.Id = SelectedEmployee.Id;
                     MapEmployee(SelectedEmployee, currentEmployee);
-                    db.Update(currentEmployee);
+                    await _serviceConnector.UpdateEmployeeAsync(currentEmployee);
                 }
                 else
                 {
-                    currentEmployee = new Database.Employee();
+                    currentEmployee = new Common.Models.Employee();
                     MapEmployee(SelectedEmployee, currentEmployee);
-                    db.Add(currentEmployee);
+                    await _serviceConnector.UpdateEmployeeAsync(currentEmployee);
                 }
-                db.SaveChanges();
-                LoadEmployees();
+                await LoadEmployeesAsync();
                 DialogTextColor = Color.Black;
                 DialogText = DialogPhrase.Saved;
             }
@@ -288,19 +305,19 @@ namespace WPFClient
         }
 
         //Удаление сотрудника из базы
-        private void RemoveEmployee()
+        private async Task RemoveEmployeeAsync()
         {
             if (SelectedEmployee.Id != default)
             {
                 try
                 {
                     ulong employeeId = SelectedEmployee.Id;
-                    var currentEmployee = db.Employees.First(e => e.Id == employeeId);
+                    var employees = await _serviceConnector.GetEmployeesAsync();
+                    var currentEmployee = employees.First(e => e.Id == employeeId);
                     if (currentEmployee != null)
                     {
                         Employees.Remove(Employees.First(e => e.Id == employeeId));
-                        db.Remove(currentEmployee);
-                        db.SaveChanges();
+                        var result = await _serviceConnector.RemoveEmployeeAsync(currentEmployee);
                         DialogTextColor = Color.Black;
                         DialogText = DialogPhrase.EmployeeDeleted;
                         return;
@@ -319,15 +336,53 @@ namespace WPFClient
         }
 
         //Заполнение базы сгенерированными сотрудниками (для упрощения тестирования)
-        private void FillDbWithRandomEmployees() 
+        private async Task FillDbWithRandomEmployeesAsync()
         {
-            var rdg = new RandomDataGenerator(db);
-            rdg.GenerateRandomEmployees();
-            RefillCollections();
+            await _serviceConnector.GenerateRandomEmployeesAsync();
+            await RefillCollectionsAsync();
             DialogTextColor = Color.Black;
             DialogText = DialogPhrase.RandomEmployeesGenerated;
         }
 
+        //Добавление нового отдела в базу
+        private async Task TryAddDepartmentToDbAsync()
+        {
+            List<Common.Models.Department> departments;
+            try
+            {
+                departments = await _serviceConnector.GetDepartmentsAsync();
+            }
+            catch
+            {
+                DialogTextColor = Color.Red;
+                DialogText = DialogPhrase.LoadFromDbError;
+                return;
+            }
+
+            if (departments.Any(d => d.Name.ToLower() == DepartmentName.ToLower()))
+            {
+                DialogTextColor = Color.Red;
+                DialogText = DialogPhrase.DepartmentAlreadyExists;
+            }
+            else
+            {
+                try
+                {
+                    var department = new Common.Models.Department() { Name = DepartmentName };
+                    await _serviceConnector.AddDepartmentAsync(department);
+                    departments = await _serviceConnector.GetDepartmentsAsync();
+                    department = departments.First(d => d.Name == DepartmentName);
+                    Departments.Add(new Department(department.Id, department.Name));
+                    DialogTextColor = Color.Black;
+                    DialogText = DialogPhrase.Saved;
+                }
+                catch
+                {
+                    DialogTextColor = Color.Red;
+                    DialogText = DialogPhrase.SaveToDbError;
+                }
+            }
+        }
         #endregion
     }
 }

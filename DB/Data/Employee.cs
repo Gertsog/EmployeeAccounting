@@ -1,4 +1,4 @@
-﻿namespace WPFClient.Database
+﻿namespace DB.Data
 {
     public class Employee
     {

@@ -11,10 +11,10 @@ namespace WPFClient
         public ulong Id
         {
             get => id;
-            set 
-            { 
-                id = value; 
-                OnPropertyChanged(nameof(Id)); 
+            set
+            {
+                id = value;
+                OnPropertyChanged(nameof(Id));
             }
         }
 
@@ -23,10 +23,10 @@ namespace WPFClient
         public string LastName
         {
             get => lastName;
-            set 
-            { 
-                lastName = value; 
-                OnPropertyChanged(nameof(LastName)); 
+            set
+            {
+                lastName = value;
+                OnPropertyChanged(nameof(LastName));
             }
         }
 
@@ -47,10 +47,10 @@ namespace WPFClient
         public string FatherName
         {
             get => fatherName;
-            set 
-            { 
-                fatherName = value; 
-                OnPropertyChanged(nameof(FatherName)); 
+            set
+            {
+                fatherName = value;
+                OnPropertyChanged(nameof(FatherName));
             }
         }
 
@@ -86,10 +86,10 @@ namespace WPFClient
         public ulong DepartmentId
         {
             get => departmentId;
-            set 
-            { 
-                departmentId = value; 
-                OnPropertyChanged(nameof(DepartmentId)); 
+            set
+            {
+                departmentId = value;
+                OnPropertyChanged(nameof(DepartmentId));
             }
         }
 
@@ -98,20 +98,17 @@ namespace WPFClient
         public string DepartmentName
         {
             get => departmentName;
-            set 
-            { 
-                departmentName = value; 
-                OnPropertyChanged(nameof(DepartmentName)); 
+            set
+            {
+                departmentName = value;
+                OnPropertyChanged(nameof(DepartmentName));
             }
         }
 
-        public Employee()
-        {
-
-        }
+        public Employee() { }
 
         //TODO: сделать класс с маппингом?
-        public Employee(Database.Employee employee) 
+        public Employee(Common.Models.Employee employee)
         {
             Id = employee.Id;
             FirstName = employee.FirstName;
@@ -120,7 +117,7 @@ namespace WPFClient
             Position = employee.Position;
             Salary = employee.Salary;
             DepartmentId = employee.DepartmentId;
-            DepartmentName = employee.Department.Name;
+            DepartmentName = employee.DepartmentName;
         }
 
         // Маска для ввода числа в поле с окладом

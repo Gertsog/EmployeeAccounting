@@ -4,9 +4,9 @@ namespace WPFClient
 {
     public partial class DepartmentView : Window
     {
-        private DepartmentVM vm;
+        private ApplicationVM vm;
 
-        public DepartmentView(DepartmentVM vm)
+        public DepartmentView(ApplicationVM vm)
         {
             InitializeComponent();
             DataContext = this.vm = vm;
