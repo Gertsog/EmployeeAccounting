@@ -250,8 +250,8 @@ namespace WPFClient
             dbEmployee.FatherName = employee.FatherName;
             dbEmployee.Position = employee.Position;
             dbEmployee.Salary = employee.Salary;
-            dbEmployee.DepartmentId = employee.DepartmentId;
             dbEmployee.DepartmentName = employee.DepartmentName;
+            dbEmployee.DepartmentId = Departments.First(d => d.Name == employee.DepartmentName).Id;
         }
 
         //Проверка на наличие незаполненных строковых свойств
@@ -291,7 +291,7 @@ namespace WPFClient
                 {
                     currentEmployee = new Common.Models.Employee();
                     MapEmployee(SelectedEmployee, currentEmployee);
-                    await _serviceConnector.UpdateEmployeeAsync(currentEmployee);
+                    await _serviceConnector.AddEmployeeAsync(currentEmployee);
                 }
                 await LoadEmployeesAsync();
                 DialogTextColor = Color.Black;

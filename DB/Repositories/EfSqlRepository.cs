@@ -95,7 +95,7 @@ namespace DB.Repositories
         public int UpdateEmployee(Employee employee)
         {
             using var db = new SqlDbContext(_connectionString);
-            if (employee != null && employee.Id != default && EmployeeAlreadyExists(employee))
+            if (employee != null && employee.Id != default)
             {
                 db.Employees.Update(employee);
                 db.SaveChanges();
