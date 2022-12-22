@@ -1,4 +1,4 @@
-﻿using Common;
+﻿using ServiceConnector;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -208,8 +208,6 @@ namespace WPFClient
         //Подгрузка сотрудников с фильтрацией
         private async Task LoadEmployeesAsync()
         {
-            //_db.Departments.Load();
-            //_db.Employees.Load();
             var employees = await _serviceConnector.GetEmployeesAsync();
             ulong id = SelectedEmployee?.Id ?? default;
             string text = searchText.ToLower();

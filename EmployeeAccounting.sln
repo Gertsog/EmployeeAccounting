@@ -14,11 +14,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DB", "DB\DB.csproj", "{841B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcService", "GrpcService\GrpcService.csproj", "{26AAA580-4714-4669-A0A2-715EAA8C1C98}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcServiceConnector", "GrpcServiceConnector\GrpcServiceConnector.csproj", "{0A014083-8C32-468A-992C-B9CB1FA0CD23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceConnector", "ServiceConnector\ServiceConnector.csproj", "{0A014083-8C32-468A-992C-B9CB1FA0CD23}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{9CFEEA8A-34D5-490F-BC07-3C42B6B5C7B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{AC675E08-6D0E-4D09-8C4D-15CE8040E8FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApi\WebApi.csproj", "{AC675E08-6D0E-4D09-8C4D-15CE8040E8FE}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "ReactClient", "ReactClient\ReactClient.esproj", "{A0A8BB34-5627-4A0F-A3D7-DD1D2B0D6320}"
 EndProject

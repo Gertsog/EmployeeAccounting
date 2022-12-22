@@ -1,5 +1,4 @@
-﻿using Common;
-using GrpcServiceConnector;
+﻿using ServiceConnector;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 

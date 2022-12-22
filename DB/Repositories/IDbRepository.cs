@@ -2,9 +2,10 @@
 
 namespace DB.Repositories
 {
+    //В планах - добавить MongoDB и реализовать интерфейс под неё
     public interface IDbRepository
     {
-        public int CheckConnection();
+        public int CheckDBConnection();
         public int CreateDB();
         public int GenerateRandomEmployees();
 

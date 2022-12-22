@@ -1,4 +1,4 @@
-﻿namespace GrpcServiceConnector
+﻿namespace ServiceConnector
 {
     public class Mapper
     {

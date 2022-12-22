@@ -1,4 +1,4 @@
-﻿namespace GrpcServiceConnector.Protos
+﻿namespace ServiceConnector.Protos
 {
     public partial class DecimalValue
     {

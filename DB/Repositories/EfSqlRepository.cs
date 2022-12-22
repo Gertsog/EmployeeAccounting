@@ -4,6 +4,7 @@ using System.Net;
 
 namespace DB.Repositories
 {
+    //TODO: проверить работу с PostgreSQL
     public class EfSqlRepository : IDbRepository
     {
         private string _connectionString;
@@ -13,6 +14,11 @@ namespace DB.Repositories
             _connectionString = connectionString;
         }
 
+        /// <summary>
+        /// Add department to database
+        /// </summary>
+        /// <param name="department">Department</param>
+        /// <returns>Status code</returns>
         public int AddDepartment(Department department)
         {
             using var db = new SqlDbContext(_connectionString);
@@ -37,7 +43,7 @@ namespace DB.Repositories
             return (int)HttpStatusCode.InternalServerError;
         }
 
-        public int CheckConnection()
+        public int CheckDBConnection()
         {
             using var db = new SqlDbContext(_connectionString);
             if (db.Database.CanConnect())
@@ -110,6 +116,7 @@ namespace DB.Repositories
             return db.Departments.Any(d => d.Name == department.Name);
         }
 
+        //А нужна ли эта проверка?
         private bool EmployeeAlreadyExists(Employee employee)
         {
             using var db = new SqlDbContext(_connectionString);

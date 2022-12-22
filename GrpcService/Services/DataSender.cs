@@ -12,6 +12,11 @@ namespace gRPCService.Services
             _dbService = dbService;
         }
 
+        /// <summary>
+        /// Sends department list to client
+        /// </summary>
+        /// <param name="request">Empty request</param>
+        /// <returns>Department list</returns>
         public override Task<DepartmentsResponse> LoadDepartments(Empty request, ServerCallContext context)
         {
             var deparmentsResponse = new DepartmentsResponse();
@@ -21,6 +26,11 @@ namespace gRPCService.Services
             return Task.FromResult(deparmentsResponse);
         }
 
+        /// <summary>
+        /// Sends employee list to client
+        /// </summary>
+        /// <param name="request">Empty request</param>
+        /// <returns>Employee list</returns>
         public override Task<EmployeesResponse> LoadEmployees(Empty request, ServerCallContext context)
         {
             var employeesResponse = new EmployeesResponse();
@@ -30,6 +40,11 @@ namespace gRPCService.Services
             return Task.FromResult(employeesResponse);
         }
 
+        /// <summary>
+        /// Receive add department request from client
+        /// </summary>
+        /// <param name="request">Department</param>
+        /// <returns>Status code</returns>
         public override Task<StatusResponse> AddDepartment(DepartmentRequest request, ServerCallContext context)
         {
             var mapper = new GrpcService.Mapper();
@@ -39,6 +54,11 @@ namespace gRPCService.Services
             return Task.FromResult(new StatusResponse { StatusCode = result });
         }
 
+        /// <summary>
+        /// Receive add employee request from client
+        /// </summary>
+        /// <param name="request">Employee</param>
+        /// <returns>Status code</returns>
         public override Task<StatusResponse> AddEmployee(EmployeeRequest request, ServerCallContext context)
         {
             var mapper = new GrpcService.Mapper();
@@ -48,6 +68,11 @@ namespace gRPCService.Services
             return Task.FromResult(new StatusResponse { StatusCode = result });
         }
 
+        /// <summary>
+        /// Receive remove employee request from client
+        /// </summary>
+        /// <param name="request">Employee</param>
+        /// <returns>Status code</returns>
         public override Task<StatusResponse> RemoveEmployee(EmployeeRequest request, ServerCallContext context)
         {
             var mapper = new GrpcService.Mapper();
@@ -57,6 +82,11 @@ namespace gRPCService.Services
             return Task.FromResult(new StatusResponse { StatusCode = result });
         }
 
+        /// <summary>
+        /// Receive update employee request from client
+        /// </summary>
+        /// <param name="request">Employee</param>
+        /// <returns>Status code</returns>
         public override Task<StatusResponse> UpdateEmployee(EmployeeRequest request, ServerCallContext context)
         {
             var mapper = new GrpcService.Mapper();
@@ -66,6 +96,11 @@ namespace gRPCService.Services
             return Task.FromResult(new StatusResponse { StatusCode = result });
         }
 
+        /// <summary>
+        /// Generate random employee data for database
+        /// </summary>
+        /// <param name="request">Empty request</param>
+        /// <returns>Status code</returns>
         public override Task<StatusResponse> GenerateRandomEmployees(Empty request, ServerCallContext context)
         {
             var result = _dbService.GenerateRandomEmployees();
@@ -73,6 +108,11 @@ namespace gRPCService.Services
             return Task.FromResult(new StatusResponse { StatusCode = result });
         }
 
+        /// <summary>
+        /// Send database connection status to client
+        /// </summary>
+        /// <param name="request">Empty request</param>
+        /// <returns>Status code</returns>
         public override Task<StatusResponse> CheckConnection(Empty request, ServerCallContext context)
         {
             var result = _dbService.CheckConnection();
@@ -80,6 +120,11 @@ namespace gRPCService.Services
             return Task.FromResult(new StatusResponse { StatusCode = result });
         }
 
+        /// <summary>
+        /// Recieve database creation request from client
+        /// </summary>
+        /// <param name="request">Empty request</param>
+        /// <returns>Status code</returns>
         public override Task<StatusResponse> CreateDB(Empty request, ServerCallContext context)
         {
             var result = _dbService.CreateDB();

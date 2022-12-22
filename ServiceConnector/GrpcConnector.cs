@@ -1,8 +1,7 @@
-﻿using Common;
-using Grpc.Net.Client;
-using GrpcServiceConnector.Protos;
+﻿using Grpc.Net.Client;
+using ServiceConnector.Protos;
 
-namespace GrpcServiceConnector
+namespace ServiceConnector
 {
     public class GrpcConnector : IServiceConnector
     {

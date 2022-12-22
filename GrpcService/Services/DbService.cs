@@ -48,7 +48,7 @@ namespace gRPCService.Services
         }
         public int CheckConnection()
         {
-            return _dbRepository.CheckConnection();
+            return _dbRepository.CheckDBConnection();
         }
 
         public int CreateDB()

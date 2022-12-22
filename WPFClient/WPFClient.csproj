@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\GrpcServiceConnector\GrpcServiceConnector.csproj" />
+    <ProjectReference Include="..\ServiceConnector\ServiceConnector.csproj" />
   </ItemGroup>
 
 </Project>

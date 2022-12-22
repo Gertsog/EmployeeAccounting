@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "GrpcServiceConnector.Protos";
+option csharp_namespace = "ServiceConnector.Protos";
 
 service Data {
     rpc AddEmployee (EmployeeRequest) returns (StatusResponse);
