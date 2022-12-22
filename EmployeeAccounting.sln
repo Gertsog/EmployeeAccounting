@@ -20,6 +20,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{AC675E08-6D0E-4D09-8C4D-15CE8040E8FE}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "ReactClient", "ReactClient\ReactClient.esproj", "{A0A8BB34-5627-4A0F-A3D7-DD1D2B0D6320}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,12 @@ Global
 		{AC675E08-6D0E-4D09-8C4D-15CE8040E8FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC675E08-6D0E-4D09-8C4D-15CE8040E8FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC675E08-6D0E-4D09-8C4D-15CE8040E8FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0A8BB34-5627-4A0F-A3D7-DD1D2B0D6320}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0A8BB34-5627-4A0F-A3D7-DD1D2B0D6320}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0A8BB34-5627-4A0F-A3D7-DD1D2B0D6320}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{A0A8BB34-5627-4A0F-A3D7-DD1D2B0D6320}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0A8BB34-5627-4A0F-A3D7-DD1D2B0D6320}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0A8BB34-5627-4A0F-A3D7-DD1D2B0D6320}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
