@@ -8,9 +8,9 @@ namespace ServiceConnector
         private GrpcChannel _channel;
         private Data.DataClient _client;
 
-        public GrpcConnector()
+        public GrpcConnector(string serviceUrl)
         {
-            _channel = GrpcChannel.ForAddress("https://localhost:7027");
+            _channel = GrpcChannel.ForAddress(serviceUrl);
             _client = new Data.DataClient(_channel);
         }
 

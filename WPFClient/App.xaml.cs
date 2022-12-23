@@ -1,6 +1,7 @@
 ﻿using ServiceConnector;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
+using System.Configuration;
 
 namespace WPFClient
 {
@@ -22,7 +23,12 @@ namespace WPFClient
         {
             services.AddSingleton<ApplicationVM>();
             services.AddSingleton<MainWindowView>();
-            services.AddSingleton<IServiceConnector>(new GrpcConnector());
+
+            //var serviceUrl = ConfigurationManager.AppSettings["WebApiConnectionUrl"].ToString();
+            //var connector = new WebApiConnector(serviceUrl);
+            var serviceUrl = ConfigurationManager.AppSettings["GrpcConnectionUrl"].ToString();
+            var connector = new GrpcConnector(serviceUrl);
+            services.AddSingleton<IServiceConnector>(connector);
         }
 
         private void Application_Startup(object sender, StartupEventArgs e)
