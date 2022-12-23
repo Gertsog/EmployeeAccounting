@@ -4,12 +4,12 @@ namespace WPFClient
 {
     public partial class MainWindowView : Window
     {
-        private ApplicationVM vm;
+        private ApplicationVM _vm;
 
         public MainWindowView(ApplicationVM vm)
         {
             InitializeComponent();
-            DataContext = this.vm = vm;
+            DataContext = _vm = vm;
         }
     }
 }
