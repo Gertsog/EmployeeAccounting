@@ -1,6 +1,5 @@
-﻿using DB.Repositories;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using WebApi.Services;
 
 namespace WebApi.Controllers
 {
@@ -8,33 +7,34 @@ namespace WebApi.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        private readonly IDbRepository _dbRepository;
+        private readonly DbService _dbService;
 
-        public EmployeeController(IDbRepository dbRepository)
+        public EmployeeController(DbService dbService)
         {
-            _dbRepository = dbRepository;
+            _dbService = dbService;
         }
 
         [HttpGet]
         public JsonResult Get()
         {
-            var employees = _dbRepository.GetEmployees();
-            return new JsonResult(employees);
+            var result = _dbService.GetEmployees();
+
+            return new JsonResult(result);
         }
 
         [HttpPost]
         public JsonResult Post(Models.Employee employee)
         {
-            var mapper = new Mapper();
-            var result = _dbRepository.AddEmployee(mapper.MapEmployee(employee));
+            var result = _dbService.AddEmployee(employee);
+
             return new JsonResult(result);
         }
 
         [HttpPut]
         public JsonResult Put(Models.Employee employee)
         {
-            var mapper = new Mapper();
-            var result = _dbRepository.UpdateEmployee(mapper.MapEmployee(employee));
+            var result = _dbService.UpdateEmployee(employee);
+
             return new JsonResult(result);
         }
 
@@ -42,9 +42,28 @@ namespace WebApi.Controllers
         [HttpDelete]
         public JsonResult Delete(Models.Employee employee)
         {
-            var mapper = new Mapper();
-            var result = _dbRepository.RemoveEmployee(mapper.MapEmployee(employee));
+            var result = _dbService.RemoveEmployee(employee);
+
             return new JsonResult(result);
         }
+
+        [HttpPost]
+        [Route("AddRandomEmployees")]
+        public JsonResult AddRandomEmployees()
+        {
+            var result = _dbService.GenerateRandomEmployees();
+
+            return new JsonResult(result);
+        }
+
+        [HttpPost]
+        [Route("CheckConnection")]
+        public JsonResult CheckConnection()
+        {
+            var result = _dbService.CheckDbConnection();
+
+            return new JsonResult(result);
+        }
+
     }
 }

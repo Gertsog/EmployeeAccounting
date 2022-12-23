@@ -1,44 +1,63 @@
-﻿using DB.Data;
-using DB.Repositories;
+﻿using DB.Repositories;
+using GrpcService;
+using GrpcService.Protos;
 
 namespace gRPCService.Services
 {
     public class DbService
     {
         private IDbRepository _dbRepository;
+        private Mapper _mapper;
 
         public DbService(IDbRepository dbRepository)
         {
             _dbRepository = dbRepository;
+            _mapper = new Mapper();
         }
 
-        public List<Department> GetDepartments()
+        public DepartmentsResponse GetDepartments()
         {
-            return _dbRepository.GetDepartments();
+            var deparmentsResponse = new DepartmentsResponse();
+            deparmentsResponse.Departments.AddRange(_dbRepository.GetDepartments()
+                .Select(d => _mapper.MapDepartment(d)));
+
+            return deparmentsResponse;
         }
 
-        public List<Employee> GetEmployees()
+        public EmployeesResponse GetEmployees()
         {
-            return _dbRepository.GetEmployees();
+            var employeesResponse = new EmployeesResponse();
+            employeesResponse.Employees.AddRange(_dbRepository.GetEmployees()
+                .Select(e => _mapper.MapEmployee(e)));
+
+            return employeesResponse;
         }
 
-        public int AddDepartment(Department department)
+        public int AddDepartment(Department protoDepartment)
         {
+            var department = _mapper.MapDepartment(protoDepartment);
+
             return _dbRepository.AddDepartment(department);
         }
 
-        public int AddEmployee(Employee employee)
+        public int AddEmployee(Employee protoEmployee)
         {
+            var employee = _mapper.MapEmployee(protoEmployee);
+
             return _dbRepository.AddEmployee(employee);
         }
 
-        public int RemoveEmployee(Employee employee)
+        public int RemoveEmployee(Employee protoEmployee)
         {
+            var employee = _mapper.MapEmployee(protoEmployee);
+
             return _dbRepository.RemoveEmployee(employee);
         }
 
-        public int UpdateEmployee(Employee employee)
+        public int UpdateEmployee(Employee protoEmployee)
         {
+            var employee = _mapper.MapEmployee(protoEmployee);
+
             return _dbRepository.UpdateEmployee(employee);
         }
 
@@ -46,14 +65,10 @@ namespace gRPCService.Services
         {
             return _dbRepository.GenerateRandomEmployees();
         }
-        public int CheckConnection()
-        {
-            return _dbRepository.CheckDBConnection();
-        }
 
-        public int CreateDB()
+        public int CheckDbConnection()
         {
-            return _dbRepository.CreateDB();
+            return _dbRepository.CheckDbConnection();
         }
 
     }

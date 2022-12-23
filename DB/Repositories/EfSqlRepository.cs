@@ -43,15 +43,7 @@ namespace DB.Repositories
             return (int)HttpStatusCode.InternalServerError;
         }
 
-        public int CheckDBConnection()
-        {
-            using var db = new SqlDbContext(_connectionString);
-            if (db.Database.CanConnect())
-                return (int)HttpStatusCode.OK;
-            return (int)HttpStatusCode.InternalServerError;
-        }
-
-        public int CreateDB()
+        public int CheckDbConnection()
         {
             using var db = new SqlDbContext(_connectionString);
             if (!db.Database.CanConnect())

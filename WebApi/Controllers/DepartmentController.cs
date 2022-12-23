@@ -1,6 +1,5 @@
-﻿using DB.Repositories;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using WebApi.Services;
 
 namespace WebApi.Controllers
 {
@@ -8,26 +7,26 @@ namespace WebApi.Controllers
     [ApiController]
     public class DepartmentController : ControllerBase
     {
-        private readonly IDbRepository _dbRepository;
+        private readonly DbService _dbService;
 
-        public DepartmentController(IDbRepository dbRepository)
+        public DepartmentController(DbService dbService)
         {
-            _dbRepository = dbRepository;
+            _dbService = dbService;
         }
 
         [HttpGet]
         public JsonResult Get()
         {
-            var mapper = new Mapper();
-            var departments = _dbRepository.GetDepartments().Select(d => mapper.MapDepartment(d));
-            return new JsonResult(departments);
+            var result = _dbService.GetDepartments();
+
+            return new JsonResult(result);
         }
 
         [HttpPost]
         public JsonResult Post(Models.Department department)
         {
-            var mapper = new Mapper();
-            var result = _dbRepository.AddDepartment(mapper.MapDepartment(department));
+            var result = _dbService.AddDepartment(department);
+
             return new JsonResult(result);
         }
     }

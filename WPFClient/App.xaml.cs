@@ -24,10 +24,10 @@ namespace WPFClient
             services.AddSingleton<ApplicationVM>();
             services.AddSingleton<MainWindowView>();
 
-            //var serviceUrl = ConfigurationManager.AppSettings["WebApiConnectionUrl"].ToString();
-            //var connector = new WebApiConnector(serviceUrl);
-            var serviceUrl = ConfigurationManager.AppSettings["GrpcConnectionUrl"].ToString();
-            var connector = new GrpcConnector(serviceUrl);
+            var serviceUrl = ConfigurationManager.AppSettings["WebApiConnectionUrl"].ToString();
+            var connector = new WebApiConnector(serviceUrl);
+            //var serviceUrl = ConfigurationManager.AppSettings["GrpcConnectionUrl"].ToString();
+            //var connector = new GrpcConnector(serviceUrl);
             services.AddSingleton<IServiceConnector>(connector);
         }
 

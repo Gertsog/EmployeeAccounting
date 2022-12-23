@@ -172,12 +172,10 @@ namespace WPFClient
         {
             try
             {
-                var result = await _serviceConnector.CheckConnectionAsync();
+                var result = await _serviceConnector.CheckDbConnectionAsync();
                 if (result != 200)
                 {
-                    result = await _serviceConnector.CreateDBAsync();
-                    if (result != 200)
-                        throw new Exception();
+                    throw new Exception();
                 }
                 await RefillCollectionsAsync();
             }

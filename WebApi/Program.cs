@@ -1,5 +1,6 @@
 using DB.Repositories;
 using Newtonsoft.Json.Serialization;
+using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddCors(c =>
 
 var connectionString = builder.Configuration.GetConnectionString("MSSQLConnection");
 builder.Services.AddSingleton<IDbRepository>(new EfSqlRepository(connectionString));
+builder.Services.AddSingleton<DbService>();
 
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options => options

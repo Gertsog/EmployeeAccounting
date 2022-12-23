@@ -220,7 +220,7 @@ export class Employee extends Component {
                                     {e.Salary}
                                 </td>
                                 <td>
-                                    {e.Department.Name}
+                                    {e.DepartmentName}
                                 </td>
                                 <td>
                                     <button type="button" className="btn btn-light mr-1"
