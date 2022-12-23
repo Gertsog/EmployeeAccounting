@@ -81,7 +81,7 @@ namespace ServiceConnector
             {
                 Content = JsonContent.Create(employee),
                 Method = HttpMethod.Delete,
-                RequestUri = new Uri(_url + "/api/Employee", UriKind.Relative)
+                RequestUri = new Uri("/api/Employee", UriKind.Relative)
             };
             var response = await _httpClient.SendAsync(request);
             var result = await response.Content.ReadFromJsonAsync<int>();
