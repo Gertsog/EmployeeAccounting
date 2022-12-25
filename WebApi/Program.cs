@@ -1,5 +1,6 @@
 using DB.Repositories;
 using Newtonsoft.Json.Serialization;
+using System.Text.Json;
 using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +21,7 @@ builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options => options
         .SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
     .AddNewtonsoftJson(options => options
-        .SerializerSettings.ContractResolver = new DefaultContractResolver());
+        .SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
