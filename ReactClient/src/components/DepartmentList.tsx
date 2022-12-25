@@ -8,11 +8,23 @@ interface DepartmentListProps {
 
 const DepartmentList: React.FC<DepartmentListProps> = ({departments}) => {
     return (
-        <tbody>
-            {departments.map(department =>
-                <DepartmentItem key={department.id} department={department} />
-            )}
-        </tbody>
+        <table className="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        DepartmentId
+                    </th>
+                    <th>
+                        DepartmentName
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {departments.map(department =>
+                    <DepartmentItem key={department.id} department={department} />
+                )}
+            </tbody>
+        </table>
     );
 };
 
