@@ -1,16 +1,17 @@
-import * as React from 'react'
-import { IDepartment, IEmployee } from '../types/types';
-import { variables } from '../Variables';
+import {FC, useEffect, useState} from 'react'
+import {IDepartment, IEmployee} from '../types/types';
+import {variables} from '../Variables';
 import EmployeeList from './EmployeeList';
 
-const EmployeesPage: React.FC = () => {
-    const [employees, setEmployees] = React.useState<IEmployee[]>([]);
-    const [departments, setDepartments] = React.useState<IDepartment[]>([]);
+const EmployeesPage: FC = () => {
+    const [employees, setEmployees] = useState<IEmployee[]>([]);
+    const [departments, setDepartments] = useState<IDepartment[]>([]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         fetchEmployees();
         fetchDepartments();
     }, []);
+
 
     async function fetchEmployees() {
         try {
@@ -31,7 +32,7 @@ const EmployeesPage: React.FC = () => {
             alert(e);
         }
     }
-
+   
     return (
         <EmployeeList employees={employees} />
     );

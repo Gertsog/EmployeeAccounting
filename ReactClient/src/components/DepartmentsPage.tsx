@@ -1,12 +1,12 @@
-import * as React from 'react'
-import { IDepartment } from '../types/types';
-import { variables } from '../Variables';
+import {FC, useEffect, useState} from 'react'
+import {IDepartment} from '../types/types';
+import {variables} from '../Variables';
 import DepartmentList from './DepartmentList';
 
-const DepartmentsPage: React.FC = () => {
-    const [departments, setDepartments] = React.useState<IDepartment[]>([]);
+const DepartmentsPage: FC = () => {
+    const [departments, setDepartments] = useState<IDepartment[]>([]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         fetchDepartments();
     }, []);
 

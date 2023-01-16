@@ -1,22 +1,19 @@
-import * as React from 'react'
-import { IDepartment } from '../types/types';
+import {FC} from 'react'
+import {IDepartment} from '../types/types';
 import DepartmentItem from './DepartmentItem';
 
 interface DepartmentListProps {
     departments: IDepartment[]
 }
 
-const DepartmentList: React.FC<DepartmentListProps> = ({departments}) => {
+const DepartmentList: FC<DepartmentListProps> = ({departments}) => {
     return (
         <table className="table table-striped">
             <thead>
                 <tr>
-                    <th>
-                        DepartmentId
-                    </th>
-                    <th>
-                        DepartmentName
-                    </th>
+                    <th>DepartmentId</th>
+                    <th>DepartmentName</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>

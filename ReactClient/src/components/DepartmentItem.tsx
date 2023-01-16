@@ -1,19 +1,15 @@
-import * as React from "react";
-import { IDepartment } from "../types/types";
+import {FC} from "react";
+import {IDepartment} from "../types/types";
 
 interface DepartmentItemProps {
     department: IDepartment
 }
 
-const DepartmentItem: React.FC<DepartmentItemProps> = ({department}) => {
+const DepartmentItem: FC<DepartmentItemProps> = ({department}) => {
     return (
         <tr key={department.id}>
-            <td>
-                {department.id}
-            </td>
-            <td>
-                {department.name}
-            </td>
+            <td>{department.id}</td>
+            <td>{department.name}</td>
             <td>
                 <button type="button" className="btn btn-light mr-1"
                     data-bs-toggle="modal" data-bs-target="#exampleModal">
