@@ -63,7 +63,7 @@ export class Employee extends Component {
         this.setState({
             modalTitle: "Edit Employee",
             Id: employee.Id,
-            FirstName: employee.FatherName,
+            FirstName: employee.FirstName,
             LastName: employee.LastName,
             FatherName: employee.FatherName,
             Position: employee.Position,
@@ -80,7 +80,7 @@ export class Employee extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                FirstName: this.state.FatherName,
+                FirstName: this.state.FirstName,
                 LastName: this.state.LastName,
                 FatherName: this.state.FatherName,
                 Position: this.state.Position,
@@ -105,8 +105,8 @@ export class Employee extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                Id: this.state.DepartmentId,
-                FirstName: this.state.FatherName,
+                Id: this.state.Id,
+                FirstName: this.state.FirstName,
                 LastName: this.state.LastName,
                 FatherName: this.state.FatherName,
                 Position: this.state.Position,
@@ -133,8 +133,8 @@ export class Employee extends Component {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    Id: this.state.DepartmentId,
-                    FirstName: this.state.FatherName,
+                    Id: this.state.Id,
+                    FirstName: this.state.FirstName,
                     LastName: this.state.LastName,
                     FatherName: this.state.FatherName,
                     Position: this.state.Position,
