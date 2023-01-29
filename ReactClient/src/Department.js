@@ -9,25 +9,24 @@ export class Department extends Component {
         this.state = {
             departments: [],
             modalTitle: "",
-            Id: 0,
-            Name: "",
-
-            IdFilter: "",
-            NameFilter: "",
+            id: 0,
+            name: "",
+            idFilter: "",
+            nameFilter: "",
             departmentsWithoutFilter: []
         }
     }
 
     FilterFn() {
-        var IdFilter = this.state.IdFilter;
-        var NameFilter = this.state.NameFilter;
+        var idFilter = this.state.idFilter;
+        var nameFilter = this.state.nameFilter;
 
         var filteredData = this.state.departmentsWithoutFilter.filter(
             function (el) {
-                return el.Id.toString().toLowerCase().includes(
-                    IdFilter.toString().trim().toLowerCase()
-                ) && el.Name.toString().toLowerCase().includes(
-                    NameFilter.toString().trim().toLowerCase()
+                return el.id.toString().toLowerCase().includes(
+                    idFilter.toString().trim().toLowerCase()
+                ) && el.name.toString().toLowerCase().includes(
+                    nameFilter.toString().trim().toLowerCase()
                 );
             }
         );
@@ -48,12 +47,12 @@ export class Department extends Component {
     }
 
     changeDepartmentIdFilter = (e) => {
-        this.state.IdFilter = e.target.value;
+        this.state.idFilter = e.target.value;
         this.FilterFn();
     }
 
     changeDepartmentNameFilter = (e) => {
-        this.state.NameFilter = e.target.value;
+        this.state.nameFilter = e.target.value;
         this.FilterFn();
     }
 
@@ -70,22 +69,22 @@ export class Department extends Component {
     }
 
     changeDepartmentName = (e) => {
-        this.setState({ Name: e.target.value });
+        this.setState({ name: e.target.value });
     }
 
     addClick() {
         this.setState({
             modalTitle: "Add Department",
-            Id: 0,
-            Name: ""
+            id: 0,
+            name: ""
         });
     }
 
     editClick(department) {
         this.setState({
             modalTitle: "Edit Department",
-            Id: department.Id,
-            Name: department.Name
+            id: department.id,
+            name: department.name
         });
     }
 
@@ -97,7 +96,7 @@ export class Department extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                Name: this.state.Name
+                name: this.state.name
             })
         })
         .then(response => response.json)
@@ -117,8 +116,8 @@ export class Department extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                Id: this.state.Id,
-                Name: this.state.Name
+                id: this.state.id,
+                name: this.state.name
             })
         })
         .then(response => response.json)
@@ -134,8 +133,8 @@ export class Department extends Component {
         const {
             departments,
             modalTitle,
-            Id,
-            Name
+            id,
+            name
         } = this.state;
 
         return (
@@ -151,60 +150,33 @@ export class Department extends Component {
                                 <div className="d-flex flex-row">
 
                                     <input className="form-control m-2"
-                                        onChange={this.changeDepartmentIdFilter}
-                                        placeholder="Filter" />
-
-                                    <button type="button" className="btn btn-light"
-                                        onClick={() => this.sortResult("Id", true)}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-down-square-fill" viewBox="0 0 16 16">
-                                            <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z" />
-                                        </svg>
-                                    </button>
-
-                                    <button type="button" className="btn btn-light"
-                                        onClick={() => this.sortResult("Id", false)}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-up-square-fill" viewBox="0 0 16 16">
-                                            <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z" />
-                                        </svg>
-                                    </button>
-
-                                </div>
-                                DepartmentId
-                            </th>
-                            <th>
-                                <div className="d-flex flex-row">
-
-                                    <input className="form-control m-2"
                                         onChange={this.changeDepartmentNameFilter}
                                         placeholder="Filter" />
 
                                     <button type="button" className="btn btn-light"
-                                        onClick={() => this.sortResult("Name", true)}>
+                                        onClick={() => this.sortResult("name", true)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-down-square-fill" viewBox="0 0 16 16">
                                             <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z" />
                                         </svg>
                                     </button>
 
                                     <button type="button" className="btn btn-light"
-                                        onClick={() => this.sortResult("Name", false)}>
+                                        onClick={() => this.sortResult("name", false)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-up-square-fill" viewBox="0 0 16 16">
                                             <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z" />
                                         </svg>
                                     </button>
 
                                 </div>
-                                DepartmentName
+                                Department
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         {departments.map(d =>
-                            <tr key={d.Id}>
+                            <tr key={d.id}>
                                 <td>
-                                    {d.Id}
-                                </td>
-                                <td>
-                                    {d.Name}
+                                    {d.name}
                                 </td>
                                 <td>
                                     <button type="button" className="btn btn-light mr-1"
@@ -237,18 +209,18 @@ export class Department extends Component {
 
                     <div className="modal-body">
                         <div className="input-group mb-3">
-                            <span className="input-group-text">DepartmentName</span>
-                            <input type="text" className="form-control" value={Name}
+                            <span className="input-group-text">Department</span>
+                            <input type="text" className="form-control" value={name}
                                 onChange={this.changeDepartmentName}/>
                             </div>
                     </div>
 
-                    {Id == 0
+                    {id == 0
                         ? <button type="button" className="btn btn-primary float-start"
                             onClick={() => this.createClick()}>Create</button>
                         : null
                     }
-                    {Id != 0
+                    {id != 0
                         ? <button type="button" className="btn btn-primary float-start"
                             onClick={() => this.updateClick()}>Update</button>
                         : null

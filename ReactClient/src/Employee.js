@@ -10,13 +10,13 @@ export class Employee extends Component {
             departments: [],
             employees: [],
             modalTitle: "",
-            Id: 0,
-            FirstName: "",
-            LastName: "",
-            FatherName: "",
-            Position: "",
-            Salary: 0,
-            Department: ""
+            id: 0,
+            firstName: "",
+            lastName: "",
+            fatherName: "",
+            position: "",
+            salary: 0,
+            department: ""
         }
     }
 
@@ -39,36 +39,36 @@ export class Employee extends Component {
     }
 
     changeEmployeeName = (e) => {
-        this.setState({ FirstName: e.target.value });
+        this.setState({ firstName: e.target.value });
     }
 
     cahngeDeaprtment = (e) => {
-        this.setState({ Department: e.target.value });
+        this.setState({ department: e.target.value });
     }
 
     addClick() {
         this.setState({
             modalTitle: "Add Employee",
-            Id: 0,
-            FirstName: "",
-            LastName: "",
-            FatherName: "",
-            Position: "",
-            Salary: 0,
-            Department: ""
+            id: 0,
+            firstName: "",
+            lastName: "",
+            fatherName: "",
+            position: "",
+            salary: 0,
+            department: ""
         });
     }
 
     editClick(employee) {
         this.setState({
             modalTitle: "Edit Employee",
-            Id: employee.Id,
-            FirstName: employee.FirstName,
-            LastName: employee.LastName,
-            FatherName: employee.FatherName,
-            Position: employee.Position,
-            Salary: employee.Salary,
-            Department: employee.Department
+            id: employee.id,
+            firstName: employee.firstName,
+            lastName: employee.lastName,
+            fatherName: employee.fatherName,
+            position: employee.position,
+            salary: employee.salary,
+            department: employee.department
         });
     }
 
@@ -80,12 +80,12 @@ export class Employee extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                FirstName: this.state.FirstName,
-                LastName: this.state.LastName,
-                FatherName: this.state.FatherName,
-                Position: this.state.Position,
-                Salary: this.state.Salary,
-                Department: this.state.Department
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                fatherName: this.state.fatherName,
+                position: this.state.position,
+                salary: this.state.salary,
+                department: this.state.department
             })
         })
         .then(response => response.json)
@@ -105,13 +105,13 @@ export class Employee extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                Id: this.state.Id,
-                FirstName: this.state.FirstName,
-                LastName: this.state.LastName,
-                FatherName: this.state.FatherName,
-                Position: this.state.Position,
-                Salary: this.state.Salary,
-                Department: this.state.Department
+                id: this.state.id,
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                fatherName: this.state.fatherName,
+                position: this.state.position,
+                salary: this.state.salary,
+                department: this.state.department
             })
         })
         .then(response => response.json)
@@ -133,13 +133,13 @@ export class Employee extends Component {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    Id: this.state.Id,
-                    FirstName: this.state.FirstName,
-                    LastName: this.state.LastName,
-                    FatherName: this.state.FatherName,
-                    Position: this.state.Position,
-                    Salary: this.state.Salary,
-                    Department: this.state.Department
+                    id: this.state.id,
+                    firstName: this.state.firstName,
+                    lastName: this.state.lastName,
+                    fatherName: this.state.fatherName,
+                    position: this.state.position,
+                    salary: this.state.salary,
+                    department: this.state.department
                 })
             })
             .then(response => response.json)
@@ -157,13 +157,13 @@ export class Employee extends Component {
             departments,
             employees,
             modalTitle,
-            Id,
-            FirstName,
-            LastName,
-            FatherName,
-            Position,
-            Salary,
-            Department
+            id,
+            firstName,
+            lastName,
+            fatherName,
+            position,
+            salary,
+            department
         } = this.state;
 
         return (
@@ -175,9 +175,6 @@ export class Employee extends Component {
                 <table className="table table-striped">
                     <thead>
                         <tr>
-                            <th>
-                                EmployeeId
-                            </th>
                             <th>
                                 FirstName
                             </th>
@@ -200,27 +197,24 @@ export class Employee extends Component {
                     </thead>
                     <tbody>
                         {employees.map(e =>
-                            <tr key={e.Id}>
+                            <tr key={e.id}>
                                 <td>
-                                    {e.Id}
+                                    {e.firstName}
                                 </td>
                                 <td>
-                                    {e.FirstName}
+                                    {e.lastName}
                                 </td>
                                 <td>
-                                    {e.LastName}
+                                    {e.fatherName}
                                 </td>
                                 <td>
-                                    {e.FatherName}
+                                    {e.position}
                                 </td>
                                 <td>
-                                    {e.Position}
+                                    {e.salary}
                                 </td>
                                 <td>
-                                    {e.Salary}
-                                </td>
-                                <td>
-                                    {e.DepartmentName}
+                                    {e.departmentName}
                                 </td>
                                 <td>
                                     <button type="button" className="btn btn-light mr-1"
@@ -260,28 +254,28 @@ export class Employee extends Component {
 
                                         <div className="input-group mb-3">
                                             <span className="input-group-text">FirstName</span>
-                                            <input type="text" className="form-control" value={FirstName}
+                                            <input type="text" className="form-control" value={firstName}
                                                 onChange={this.changeEmployeeName} />
                                         </div>
 
                                         <div className="input-group mb-3">
                                             <span className="input-group-text">Department</span>
-                                            <select className="form-select" value={Department}
+                                            <select className="form-select" value={department}
                                                 onChange={this.changeDepartment}>
-                                                {departments.map(department => <option key={department.Id}>
-                                                    {department.Name}
+                                                {departments.map(department => <option key={department.id}>
+                                                    {department.name}
                                                 </option>)}
                                             </select>
                                         </div>
                                     </div>
                                 </div>
 
-                                {Id == 0
+                                {id == 0
                                     ? <button type="button" className="btn btn-primary float-start"
                                         onClick={() => this.createClick()}>Create</button>
                                     : null
                                 }
-                                {Id != 0
+                                {id != 0
                                     ? <button type="button" className="btn btn-primary float-start"
                                         onClick={() => this.updateClick()}>Update</button>
                                     : null

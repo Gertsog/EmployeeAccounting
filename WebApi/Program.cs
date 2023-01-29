@@ -20,7 +20,7 @@ builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options => options
         .SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
     .AddNewtonsoftJson(options => options
-        .SerializerSettings.ContractResolver = new DefaultContractResolver());
+        .SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
