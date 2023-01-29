@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import { variables } from './Variables.js';
 
 export class Employee extends Component {
-
+//сделано максимально не по канону, когда-нибудь я займусь переделкой
     constructor(props) {
         super(props);
 
@@ -16,7 +16,14 @@ export class Employee extends Component {
             fatherName: "",
             position: "",
             salary: 0,
-            department: ""
+            departmentName: "",
+            firstNameFilter: "",
+            lastNameFilter: "",
+            fatherNameFilter: "",
+            positionFilter: "",
+            salaryFilter: 0,
+            departmentNameFilter: "",
+            employeesWithoutFilter: []
         }
     }
 
@@ -24,7 +31,7 @@ export class Employee extends Component {
         fetch(variables.API_URL + 'employee')
             .then(respose => respose.json())
             .then(data => {
-                this.setState({ employees: data });
+                this.setState({ employees: data, employeesWithoutFilter: data });
             });
 
         fetch(variables.API_URL + 'department')
@@ -38,12 +45,98 @@ export class Employee extends Component {
         this.refreshList();
     }
 
-    changeEmployeeName = (e) => {
+    FilterFn() {
+        var firstNameFilter = this.state.firstNameFilter;
+        var lastNameFilter = this.state.lastNameFilter;
+        var fatherNameFilter = this.state.fatherNameFilter;
+        var positionFilter = this.state.positionFilter;
+        var salaryFilter = this.state.salaryFilter;
+        var departmentNameFilter = this.state.departmentNameFilter;
+
+        var filteredData = this.state.employeesWithoutFilter.filter(
+            function (el) {
+                return el.firstName.toString().toLowerCase().includes(
+                    firstNameFilter.toString().trim().toLowerCase())
+                && el.lastName.toString().toLowerCase().includes(
+                    lastNameFilter.toString().trim().toLowerCase())
+                && el.fatherName.toString().toLowerCase().includes(
+                    fatherNameFilter.toString().trim().toLowerCase())
+                && el.position.toString().toLowerCase().includes(
+                    positionFilter.toString().trim().toLowerCase())
+                && el.salary.toString().toLowerCase().includes(
+                    salaryFilter.toString().trim().toLowerCase())
+                && el.departmentName.toString().toLowerCase().includes(
+                    departmentNameFilter.toString().trim().toLowerCase());
+            }
+        );
+
+        this.setState({ employees: filteredData });
+    }
+
+    sortResult(prop, asc) {
+        var sortedData = this.state.employeesWithoutFilter.sort(function (a, b) {
+            if (asc) {
+                return (a[prop] > b[prop]) ? 1 : ((a[prop] < b[prop]) ? -1 : 0);
+            } else {
+                return (b[prop] > a[prop]) ? 1 : ((b[prop] < a[prop]) ? -1 : 0);
+            }
+        });
+
+        this.setState({ employees: sortedData });
+    }
+
+    changeFirstNameFilter = (e) => {
+        this.state.firstNameFilter = e.target.value;
+        this.FilterFn();
+    }
+
+    changeLastNameFilter = (e) => {
+        this.state.lastNameFilter = e.target.value;
+        this.FilterFn();
+    }
+
+    changeFatherNameFilter = (e) => {
+        this.state.fatherNameFilter = e.target.value;
+        this.FilterFn();
+    }
+
+    changePositionFilter = (e) => {
+        this.state.positionFilter = e.target.value;
+        this.FilterFn();
+    }
+
+    changeSalaryFilter = (e) => {
+        this.state.salaryFilter = e.target.value;
+        this.FilterFn();
+    }
+
+    changeDepartmentNameFilter = (e) => {
+        this.state.departmentNameFilter = e.target.value;
+        this.FilterFn();
+    }
+
+    changeFirstName = (e) => {
         this.setState({ firstName: e.target.value });
     }
 
-    cahngeDeaprtment = (e) => {
-        this.setState({ department: e.target.value });
+    changeLastName = (e) => {
+        this.setState({ lirstName: e.target.value });
+    }
+
+    changeFatherName = (e) => {
+        this.setState({ fatherName: e.target.value });
+    }
+
+    changePosition = (e) => {
+        this.setState({ position: e.target.value });
+    }
+
+    changeSalary = (e) => {
+        this.setState({ salary: e.target.value });
+    }
+
+    changeDepartment = (e) => {
+        this.setState({ departmentName: e.target.value });
     }
 
     addClick() {
@@ -55,7 +148,7 @@ export class Employee extends Component {
             fatherName: "",
             position: "",
             salary: 0,
-            department: ""
+            departmentName: ""
         });
     }
 
@@ -68,7 +161,7 @@ export class Employee extends Component {
             fatherName: employee.fatherName,
             position: employee.position,
             salary: employee.salary,
-            department: employee.department
+            departmentName: employee.departmentName
         });
     }
 
@@ -85,7 +178,7 @@ export class Employee extends Component {
                 fatherName: this.state.fatherName,
                 position: this.state.position,
                 salary: this.state.salary,
-                department: this.state.department
+                departmentName: this.state.departmentName
             })
         })
         .then(response => response.json)
@@ -111,7 +204,7 @@ export class Employee extends Component {
                 fatherName: this.state.fatherName,
                 position: this.state.position,
                 salary: this.state.salary,
-                department: this.state.department
+                departmentName: this.state.departmentName
             })
         })
         .then(response => response.json)
@@ -139,7 +232,7 @@ export class Employee extends Component {
                     fatherName: this.state.fatherName,
                     position: this.state.position,
                     salary: this.state.salary,
-                    department: this.state.department
+                    departmentName: this.state.departmentName
                 })
             })
             .then(response => response.json)
@@ -163,7 +256,7 @@ export class Employee extends Component {
             fatherName,
             position,
             salary,
-            department
+            departmentName
         } = this.state;
 
         return (
@@ -176,21 +269,129 @@ export class Employee extends Component {
                     <thead>
                         <tr>
                             <th>
+                                <input className="form-control m-2"
+                                    onChange={this.changeFirstNameFilter}
+                                    placeholder="Filter" />
+
+                                <button type="button" className="btn btn-light"
+                                    onClick={() => this.sortResult("firstName", true)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-down-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z" />
+                                    </svg>
+                                </button>
+
+                                <button type="button" className="btn btn-light"
+                                    onClick={() => this.sortResult("firstName", false)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-up-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z" />
+                                    </svg>
+                                </button>
+                                <br></br>
                                 FirstName
                             </th>
                             <th>
+                                <input className="form-control m-2"
+                                    onChange={this.changeLastNameFilter}
+                                    placeholder="Filter" />
+
+                                <button type="button" className="btn btn-light"
+                                    onClick={() => this.sortResult("lastName", true)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-down-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z" />
+                                    </svg>
+                                </button>
+
+                                <button type="button" className="btn btn-light"
+                                    onClick={() => this.sortResult("lastName", false)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-up-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z" />
+                                    </svg>
+                                </button>
+                                <br></br>
                                 LastName
                             </th>
                             <th>
+                                <input className="form-control m-2"
+                                    onChange={this.changeFatherNameFilter}
+                                    placeholder="Filter" />
+
+                                <button type="button" className="btn btn-light"
+                                    onClick={() => this.sortResult("fatherName", true)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-down-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z" />
+                                    </svg>
+                                </button>
+
+                                <button type="button" className="btn btn-light"
+                                    onClick={() => this.sortResult("fatherName", false)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-up-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z" />
+                                    </svg>
+                                </button>
+                                <br></br>
                                 FatherName
                             </th>
                             <th>
+                                <input className="form-control m-2"
+                                    onChange={this.changePositionFilter}
+                                    placeholder="Filter" />
+
+                                <button type="button" className="btn btn-light"
+                                    onClick={() => this.sortResult("position", true)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-down-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z" />
+                                    </svg>
+                                </button>
+
+                                <button type="button" className="btn btn-light"
+                                    onClick={() => this.sortResult("position", false)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-up-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z" />
+                                    </svg>
+                                </button>
+                                <br></br>
                                 Position
                             </th>
                             <th>
+                                <input className="form-control m-2"
+                                    onChange={this.changeSalaryFilter}
+                                    placeholder="Filter" />
+
+                                <button type="button" className="btn btn-light"
+                                    onClick={() => this.sortResult("salary", true)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-down-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z" />
+                                    </svg>
+                                </button>
+
+                                <button type="button" className="btn btn-light"
+                                    onClick={() => this.sortResult("salary", false)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-up-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z" />
+                                    </svg>
+                                </button>
+                                <br></br>
                                 Salary
                             </th>
                             <th>
+                                <input className="form-control m-2"
+                                    onChange={this.changeDepartmentNameFilter}
+                                    placeholder="Filter" />
+
+                                <button type="button" className="btn btn-light"
+                                    onClick={() => this.sortResult("departmentName", true)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-down-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0z" />
+                                    </svg>
+                                </button>
+
+                                <button type="button" className="btn btn-light"
+                                    onClick={() => this.sortResult("departmentName", false)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-up-square-fill" viewBox="0 0 16 16">
+                                        <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z" />
+                                    </svg>
+                                </button>
+                                <br></br>
                                 Department
                             </th>
                         </tr>
@@ -255,12 +456,36 @@ export class Employee extends Component {
                                         <div className="input-group mb-3">
                                             <span className="input-group-text">FirstName</span>
                                             <input type="text" className="form-control" value={firstName}
-                                                onChange={this.changeEmployeeName} />
+                                                onChange={this.changeFirstName} />
+                                        </div>
+
+                                        <div className="input-group mb-3">
+                                            <span className="input-group-text">LastName</span>
+                                            <input type="text" className="form-control" value={lastName}
+                                                onChange={this.changeLastName} />
+                                        </div>
+                                        
+                                        <div className="input-group mb-3">
+                                            <span className="input-group-text">FatherName</span>
+                                            <input type="text" className="form-control" value={fatherName}
+                                                onChange={this.changeFatherName} />
+                                        </div>
+
+                                        <div className="input-group mb-3">
+                                            <span className="input-group-text">Position</span>
+                                            <input type="text" className="form-control" value={position}
+                                                onChange={this.changePosition} />
+                                        </div>
+
+                                        <div className="input-group mb-3">
+                                            <span className="input-group-text">Salary</span>
+                                            <input type="text" className="form-control" value={salary}
+                                                onChange={this.changeSalary} />
                                         </div>
 
                                         <div className="input-group mb-3">
                                             <span className="input-group-text">Department</span>
-                                            <select className="form-select" value={department}
+                                            <select className="form-select" value={departmentName}
                                                 onChange={this.changeDepartment}>
                                                 {departments.map(department => <option key={department.id}>
                                                     {department.name}

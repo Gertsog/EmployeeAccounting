@@ -11,21 +11,17 @@ export class Department extends Component {
             modalTitle: "",
             id: 0,
             name: "",
-            idFilter: "",
             nameFilter: "",
             departmentsWithoutFilter: []
         }
     }
 
     FilterFn() {
-        var idFilter = this.state.idFilter;
         var nameFilter = this.state.nameFilter;
 
         var filteredData = this.state.departmentsWithoutFilter.filter(
             function (el) {
-                return el.id.toString().toLowerCase().includes(
-                    idFilter.toString().trim().toLowerCase()
-                ) && el.name.toString().toLowerCase().includes(
+                return el.name.toString().toLowerCase().includes(
                     nameFilter.toString().trim().toLowerCase()
                 );
             }
